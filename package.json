@@ -1,0 +1,25 @@
+{
+  "name": "lootopia",
+  "version": "1.0.0",
+  "description": "Out of Cache souhaite étudier la faisabilité de Lootopia, une plateforme numérique dédiée à la création et à la participation à des chasses au trésor. L’ambition est de proposer une expérience mêlant jeu, géolocalisation, cartographie et gamification.",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PROJET-ETUDE-LOOTOPIA/Lootopia.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PROJET-ETUDE-LOOTOPIA/Lootopia/issues"
+  },
+  "homepage": "https://github.com/PROJET-ETUDE-LOOTOPIA/Lootopia#readme",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

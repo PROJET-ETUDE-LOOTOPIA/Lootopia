@@ -15,7 +15,6 @@
 - [Branches](#branches)
   - [Fonctionnement du script](#fonctionnement-du-script-1)
   - [Tests manuels à effectuer](#tests-manuels-à-effectuer-1)
-- [Pull requests](#pull-requests)
 
 ## Commits
 

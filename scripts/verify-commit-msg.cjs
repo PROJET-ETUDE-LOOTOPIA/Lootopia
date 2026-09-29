@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 // Verifie que le message de commit respecte les conventions du projet
 // (voir CONTRIBUTING.md, section "Conventions de nommage des commits").
-// Affiche un message d'erreur clair, en texte brut (pas de couleurs ANSI :
-// le panneau Source Control de VSCode ne les interprete pas).
+// Affiche un message d'erreur clair.
 
 const fs = require('fs');
 
@@ -29,7 +28,7 @@ function fail(problem, example) {
   process.exit(1);
 }
 
-// Laisse passer les commits generes automatiquement par git.
+// Laisse passer les commits générés automatiquement par git.
 if (/^(Merge|Revert) /.test(header)) {
   process.exit(0);
 }

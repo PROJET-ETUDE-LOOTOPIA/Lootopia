@@ -7,10 +7,15 @@
     - [Husky](#husky)
     - [Script Node](#script-node)
   - [Fonctionnement du script](#fonctionnement-du-script)
+  - [Comportement lors d'un rebase](#comportement-lors-dun-rebase)
   - [Tests manuels à effectuer](#tests-manuels-à-effectuer)
     - [Vérifier que les hooks sont bien installés](#vérifier-que-les-hooks-sont-bien-installés)
     - [Commit invalide en terminal → doit être rejeté avec un message clair](#commit-invalide-en-terminal--doit-être-rejeté-avec-un-message-clair)
     - [Vérifier qu'un `git commit --no-verify` contourne le hook](#vérifier-quun-git-commit---no-verify-contourne-le-hook)
+- [Branches](#branches)
+  - [Fonctionnement du script](#fonctionnement-du-script-1)
+  - [Tests manuels à effectuer](#tests-manuels-à-effectuer-1)
+- [Pull requests](#pull-requests)
 
 ## Commits
 
@@ -21,11 +26,11 @@ Ce projet bloque tout commit dont le message ne respecte pas la convention
 
 #### Husky
 
-La vérification est faite par un hook git natif (`commit-msg`), installé par **Husky**, qui appelle un script Node ([scripts/verify-commit-msg.cjs](scripts/verify-commit-msg.cjs)). Le hook s'applique depuis n'importe quel terminal/interface utilisant git.
+La vérification est faite par un hook git natif (`commit-msg`), installé par **Husky**, qui appelle un script Node ([scripts/verify-commit-msg.cjs](../../scripts/verify-commit-msg.cjs)). Le hook s'applique depuis n'importe quel terminal/interface utilisant git.
 
 Nous avons choisi de ne pas passer directement via le `.git/hooks` car ce dernier n'est pas versionné. Par conséquent, chaque personne qui va cloner le projet devra recréer à la main le fichier. C'est pour cette raison que nouos passons par Husky qui change l'emplacement où git va chercher les hooks.
 
-Le script `"prepare": "husky"` dans [package.json](package.json) configure `core.hooksPath` vers `.husky/_` à chaque `npm install`
+Le script `"prepare": "husky"` dans [package.json](../../package.json) configure `core.hooksPath` vers `.husky/_` à chaque `npm install`
 
 #### Script Node
 
@@ -44,7 +49,7 @@ Les messages d'erreur sont personnalisés en français, un par situation :
 | Description vide (`feat:`) | `il manque une description apres "feat:".` |
 | Point final (`fix: corrige le bug.`) | `la description ne doit pas se terminer par un point.` |
 | Majuscule en début de description (`fix: Corrige...`) | `la description doit commencer par une minuscule.` |
-| Première ligne trop longue (>100 car.) | `la premiere ligne fait X caracteres (max 100)...` |
+| Description trop longue (>72 caractères) | `la description fait X caracteres (max 72).` |
 
 Chaque erreur affiche aussi le message reçu et un exemple valide, par exemple :
 ```
@@ -54,7 +59,17 @@ Probleme      : aucun type reconnu au debut du message. Types valides : feat, fi
 Exemple valide: "fix: corrige le crash au demarrage"
 ```
 
-Pour changer un message ou ajouter une règle, il faut éditer directement [scripts/verify-commit-msg.cjs](scripts/verify-commit-msg.cjs). Chaque cas est représenté par un `if` qui appelle `fail(problème, exemple)`.
+Pour changer un message ou ajouter une règle, il faut éditer directement [scripts/verify-commit-msg.cjs](../../scripts/verify-commit-msg.cjs). Chaque cas est représenté par un `if` qui appelle `fail(problème, exemple)`.
+
+### Comportement lors d'un rebase
+
+Le hook `commit-msg` ne se déclenche pas dans tous les cas pendant un `git rebase` :
+
+| Scénario | Le hook se déclenche-t-il ? |
+|---|---|
+| `pick` | Non |
+| Résolution de conflit + `git rebase --continue` | Non |
+| `reword` ou `edit` + `git commit --amend` | Oui |
 
 ### Tests manuels à effectuer
 
@@ -76,9 +91,60 @@ git commit --allow-empty -m "fix: corrige le bug."            # point final
 git commit --allow-empty -m "fix: Corrige le bug"             # majuscule en début de description
 ```
 
-Tester également depuis une interface comme celle de VsCode
+Tester également depuis une interface comme celle de VSCode.
 
 #### Vérifier qu'un `git commit --no-verify` contourne le hook
 ```bash
 git commit --allow-empty -m "mauvais message" --no-verify
+```
+
+## Branches
+
+Ce projet bloque également le push d'une branche dont le nom ne respecte pas le format `<type>/<description-courte>` décrit dans [CONTRIBUTING.md](../../CONTRIBUTING.md) (types autorisés : `feature`, `fix`, `hotfix`, `refactor`, `docs`, `test`, `chore`, `ci`).
+
+La vérification est faite par un hook `pre-push`, installé par Husky, qui appelle [scripts/verify-branch-name.cjs](../../scripts/verify-branch-name.cjs).
+
+Contrairement au message de commit, le nom d'une branche ne peut pas être bloqué à sa création car git n'a pas de hook qui s'exécute avant qu'une branche soit créée. Le seul moment où on peut bloquer, c'est avant qu'elle parte vers le remote.
+
+Les branches `main`, `master` et `develop` sont exclues de la vérification (elles ne suivent pas le format `<type>/<description>`) mais un push vers l'une de ces branches passe toujours, quel que soit son nom, car le script les reconnaît via une liste `PROTECTED_BRANCHES` codée en dur dans [scripts/verify-branch-name.cjs](../../scripts/verify-branch-name.cjs). En revanche le push sur ces branches est bloqué directement via les settings de github.
+
+### Fonctionnement du script
+
+Git fournit au hook `pre-push`, via son entrée standard (stdin), la liste des références en train d'être poussées :
+
+```
+<ref locale> <sha locale> <ref distante> <sha distante>
+```
+
+Le script lit cette entrée, extrait le nom de chaque branche locale, et vérifie son format avec une regex. Si une branche renommée/supprimée est détectée (sha locale à zéro), elle est ignorée.
+
+Exemple de message affiché en cas de rejet :
+```
+Push refuse : le nom de la branche ne respecte pas la convention du projet (voir CONTRIBUTING.md).
+Branche       : "nimportequoi"
+Probleme      : le nom ne suit pas le format "<type>/<description-courte>". Types autorises : feature, fix, hotfix, refactor, docs, test, chore, ci.
+Exemple valide: "feature/authentification-utilisateur"
+```
+
+### Tests manuels à effectuer
+
+```bash
+# Créer un faux remote local
+git init --bare /tmp/fake-remote.git
+git remote add test-origin /tmp/fake-remote.git
+
+# Branche invalide → doit être rejetée
+git checkout -b nimportequoi
+git push test-origin nimportequoi
+
+# Branche valide → doit être acceptée
+git checkout main
+git checkout -b feature/test-branche-valide
+git push test-origin feature/test-branche-valide
+
+# Nettoyage
+git checkout main
+git branch -D nimportequoi feature/test-branche-valide
+git remote remove test-origin
+rm -rf /tmp/fake-remote.git
 ```

@@ -4,8 +4,9 @@ Sommaire de la documentation du projet.
 
 ## Cadrage
 
+- [Note de cadrage](cadrage/not-de-cadrage.md)
 - [Cahier des charges](cadrage/cahier-des-charges.md)
-- [Jour des décisions](cadrage/journal-des-decisions.md)
+- [Journal des décisions](cadrage/journal-des-decisions.md)
 
 ## CI
 

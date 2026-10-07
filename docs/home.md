@@ -4,5 +4,5 @@ Sommaire de la documentation du projet.
 
 ## CI
 
-- [Git hooks](ci/Hooks.md)
-- [Pipelines](ci/Pipelines.md)
+- [Git hooks](ci/hooks.md)
+- [Pipelines](ci/pipelines.md)

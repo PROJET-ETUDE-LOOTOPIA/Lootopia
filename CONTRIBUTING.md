@@ -69,7 +69,7 @@ docs(readme): met a jour les instructions d'installation
 chore(deps): met a jour les dependances
 ```
 
-Pour en savoir plus, n'hésitez pas à consulter la documentation associée : [Git hooks](ci/Hooks.md)
+Pour en savoir plus, n'hésitez pas à consulter la documentation associée : [Git hooks](ci/hooks.md)
 
 ## Conventions de nommage des pull requests
 

@@ -10,7 +10,7 @@
 
 ## Pull requests
 
-Ce projet vérifie le titre des pull requests (même format que les commits, décrit dans [CONTRIBUTING.md](../../CONTRIBUTING.md)). Contrairement aux commits et aux branches (voir [Git hooks](Hooks.md)), cette vérification ne peut pas passer par un hook git car le titre d'une PR est un objet GitHub.
+Ce projet vérifie le titre des pull requests (même format que les commits, décrit dans [CONTRIBUTING.md](../../CONTRIBUTING.md)). Contrairement aux commits et aux branches (voir [Git hooks](hooks.md)), cette vérification ne peut pas passer par un hook git car le titre d'une PR est un objet GitHub.
 
 La vérification est faite via une CI GitHub Actions ([.github/workflows/pr-title.yml](../../.github/workflows/pr-title.yml)), déclenchée à l'ouverture, la modification ou la mise à jour d'une pull request. Elle appelle [scripts/verify-pr-title.cjs](../../scripts/verify-pr-title.cjs), qui réutilise la même logique de validation que le hook de commit, factorisée dans [scripts/lib/validate-header.cjs](../../scripts/lib/validate-header.cjs) pour ne pas dupliquer les règles entre les deux scripts.
 

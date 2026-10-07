@@ -2,6 +2,12 @@
 
 Ce document décrit les conventions à suivre pour contribuer au projet Lootopia.
 
+## Cadrage
+
+Le [cahier des charges](docs/cadrage/cahier-des-charges.md) du projet du projet est disponible au niveau de la documentation. Toutes les décisions liées au cadrage et aux différentes prises de décisions modifiant le périmètre du projet sont consignées dans un [journal des décisions](docs/cadrage/journal-des-decisions.md).
+
+Chaque nouvelle décision doit être renseignée dans ce même journal en suivant le mode d'emploi.
+
 ## Conventions de nommage des branches
 
 Les branches doivent suivre le format suivant :

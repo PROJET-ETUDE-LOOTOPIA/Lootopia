@@ -311,7 +311,7 @@ Le séquencement des cinq jalons est fixé par le client. Le MVP correspond au c
 | Jalon | Période | Sortie attendue | Prérequis |
 | --- | --- | --- | --- |
 | 1. Cadrage | 28/09/2026 au 30/10/2026 | Périmètre, proposition de valeur, utilisateurs, scénario de démonstration, risques | Aucun |
-| 2. Conception | 01/11/2026 au 15/12/2026 | Parcours, écrans essentiels, règles métier, backlog, architecture, modèle de données, sécurité, stratégie de tests | Jalon 1 validé |
+| 2. Conception | 01/11/2026 au 15/12/2026 | Parcours, écrans essentiels, règles métier, backlog, architecture, modèle de données, sécurité, stratégie de tests, hébergement | Jalon 1 validé |
 | 3. Construction | 16/12/2026 au 31/03/2027 | Version exécutable du cœur du scénario | Architecture et backlog stabilisés |
 | 4. Consolidation | 01/04/2027 au 15/05/2027 | Version corrigée, sécurisée, testée, éventuellement enrichie | Cœur démontrable |
 | 5. Démonstration | 16/05/2027 au 30/06/2027 | Version installable, résultats, limites, suites | Critères de réussite vérifiés |

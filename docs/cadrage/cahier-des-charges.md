@@ -5,8 +5,8 @@
 | | |
 | --- | --- |
 | **Document** | Cahier des charges, Lootopia (MVP) |
-| **Version** | 0.2 |
-| **Date** | 07/10/2026 |
+| **Version** | 0.3 |
+| **Date** | 26/10/2026 |
 | **Statut** | Brouillon, en attente de validation par l'équipe |
 | **Rédacteurs** | Mathéo Souchet, Elias Forget, Alexis Ballenghien, Alexis Cantin, Arthur Millet |
 | **Document de référence** | Note de cadrage v1.0 du 28/09/2026 |
@@ -17,6 +17,7 @@
 | --- | --- | --- | --- |
 | 0.1 | 05/10/2026 | Équipe | Création du cahier des charges à partir de la note de cadrage v1.0 |
 | 0.2 | 07/10/2026 | Équipe | Rôle par chasse à la place du rôle choisi à l'inscription, suppression de compte en cascade ajoutée au périmètre, décisions techniques retirées (renvoyées au jalon 2), table des matières et contraintes ajoutées |
+| 0.3 | 26/10/2026 | Équipe | Réponses aux questions ouvertes intégrées : mode essai pour l'Organisateur, confirmation d'e-mail et mot de passe oublié, modération (signalement, rôle Admin, bannissement), distinction suppression volontaire et bannissement, chasses privées et date de fermeture optionnelle, langue française seule, chasse par équipe confirmée hors périmètre. Voir le journal des décisions D-005 à D-012 |
 
 **Table des matières**
 
@@ -38,6 +39,7 @@
   - [M4 : Participation, progression et validation](#m4---participation-progression-et-validation)
   - [M5 : Résultat final](#m5---résultat-final)
   - [M6 : Vue de suivi Organisateur](#m6---vue-de-suivi-organisateur)
+  - [M7 : Signalement et modération (Admin)](#m7---signalement-et-modération-admin)
   - [Transverse : Journalisation des actions sensibles](#transverse---journalisation-des-actions-sensibles)
 - [5. Exigences non fonctionnelles](#5-exigences-non-fonctionnelles)
   - [5.1 Sécurité](#51-sécurité)
@@ -55,7 +57,7 @@
 - [8. Risques, contraintes et questions](#8-risques-contraintes-et-questions)
   - [8.1 Risques](#81-risques)
   - [8.2 Contraintes](#82-contraintes)
-  - [8.3 Questions ouvertes](#83-questions-ouvertes)
+  - [8.3 Questions tranchées](#83-questions-tranchées)
 
 ## 1. Contexte, objectifs et périmètre du MVP
 
@@ -83,9 +85,14 @@ Ce cahier des charges décrit **ce que le MVP doit faire**. Les choix techniques
 | Résultat final : badge de complétion, temps total, étapes franchies | Must | M5 |
 | Vue de suivi Organisateur | Must | M6 |
 | Journalisation des actions sensibles | Must | Transverse |
+| Confirmation d'e-mail à l'inscription et réinitialisation du mot de passe oublié | Must | M1 |
+| Mode essai d'une chasse par son Organisateur avant publication | Must | M3 |
+| Signalement d'une chasse ou d'un organisateur, rôle Admin et traitement des signalements (bannissement) | Must | M7 |
 | Gestion du profil | Should | Après MVP |
 | Modification et dépublication d'une chasse | Should | Après MVP |
 | Indices optionnels par étape | Should | Après MVP |
+| Chasses privées, accessibles par lien ou code d'invitation | Should | Après MVP |
+| Date de fermeture optionnelle d'une chasse | Should | Après MVP |
 | Badges supplémentaires | Could | Après MVP |
 | Carte simple des étapes | Could | Après MVP |
 
@@ -101,14 +108,22 @@ Règle de coupe : en cas de dérive, les Could sautent en premier, puis les Shou
 | Rôle Partenaire | Troisième rôle sans utilité pour la boucle | Un besoin partenaire est identifié |
 | Application mobile native | Le web responsive suffit (PWA possible) | Fonctions natives nécessaires |
 | Classements | Pas de sens sans volume de joueurs&#32; | Après un déploiement réel |
-| Notifications | Inutiles à la démonstration | Besoin de réengagement |
-| Administration complète | La vue de suivi suffit | Besoin de modération |
+| Notifications générales (rappels, réengagement) | Inutiles à la démonstration. Seul le cas du bannissement nécessite un e-mail (voir M7 et RM13) | Besoin de réengagement |
+| Administration complète (tableau de bord, gestion globale des comptes et des chasses) | Modération minimale (signalement et bannissement, voir M7) nécessaire pour le MVP | Besoin d'une administration plus large |
+| Chasse par équipe | Hors scénario de référence, complexité de progression partagée non nécessaire au MVP | Besoin confirmé après le MVP |
+| Multilinguisme | Le français seul suffit pour le MVP | Besoin international identifié |
+| Variantes de réponse acceptées par étape | Non traité pour le MVP : une seule réponse attendue par étape (RM9) | Non réexaminé pour le MVP |
 
 Le modèle de données et la gestion des droits restent extensibles pour ajouter ensuite un rôle Partenaire.
 
 ## 2. Acteurs, rôles et permissions
 
-Tout utilisateur inscrit dispose du même compte. Le rôle est contextuel et attribué par chasse.  Celui qui crée une chasse en est l'**Organisateur**, et celui qui la rejoint en est **Joueur**. Un même utilisateur peut donc organiser certaines chasses et en jouer d'autres. Un visiteur non connecté ne peut que s'inscrire ou se connecter.
+Le MVP distingue deux niveaux de rôle, indépendants l'un de l'autre :
+
+- **Le type de compte**, fixé à la création du compte : **Utilisateur standard** (par défaut) ou **Admin**. Les comptes Admin sont créés hors inscription publique (jeu de données de démonstration ou action manuelle de l'équipe), aucun utilisateur ne peut s'auto-attribuer ce type.
+- **Le rôle par chasse**, contextuel : celui qui crée une chasse en est l'**Organisateur**, et celui qui la rejoint en est **Joueur**. Un même utilisateur peut donc organiser certaines chasses et en jouer d'autres. Ce rôle par chasse s'applique aussi bien à un Utilisateur standard qu'à un Admin.
+
+Un visiteur non connecté ne peut que s'inscrire ou se connecter.
 
 |  | Joueur | Organisateur |
 | --- | --- | --- |
@@ -119,27 +134,31 @@ Tout utilisateur inscrit dispose du même compte. Le rôle est contextuel et att
 
 ### 2.1 Matrice des permissions
 
-| Action | Visiteur | Utilisateur connecté | Organisateur de la chasse | Joueur de la chasse | Condition d'accès |
-| --- | --- | --- | --- | --- | --- |
-| S'inscrire, se connecter | Oui | – | – | – | Public |
-| Lister les chasses publiées | Non | Oui | Oui | Oui | Authentifié |
-| Créer une chasse | Non | Oui (il en devient l'Organisateur) | – | – | Authentifié |
-| Voir une chasse en brouillon | Non | Non | Oui | Non | Propriétaire de la chasse |
-| Modifier les étapes, publier | Non | Non | Oui | Non | Propriétaire de la chasse |
-| Rejoindre une chasse publiée | Non | Oui, sauf sa propre chasse | Non (sa propre chasse) | Déjà inscrit : refus (409) | Statut de la chasse + non-propriétaire |
-| Valider une étape | Non | Non | Non | Oui (sa participation) | Propriétaire de la participation |
-| Voir sa progression et son résultat | Non | Non | Non | Oui | Propriétaire de la participation |
-| Voir la liste des participants | Non | Non | Oui | Non | Propriétaire de la chasse |
+| Action | Visiteur | Utilisateur connecté | Organisateur de la chasse | Joueur de la chasse | Admin | Condition d'accès |
+| --- | --- | --- | --- | --- | --- | --- |
+| S'inscrire, se connecter | Oui | - | - | - | - | Public |
+| Lister les chasses publiées | Non | Oui | Oui | Oui | Oui | Authentifié |
+| Créer une chasse | Non | Oui (il en devient l'Organisateur) | - | - | Oui | Authentifié |
+| Voir une chasse en brouillon | Non | Non | Oui | Non | Non | Propriétaire de la chasse |
+| Tester sa chasse en mode essai (aperçu) | Non | Non | Oui | Non | Non | Propriétaire de la chasse, chasse en brouillon |
+| Modifier les étapes, publier | Non | Non | Oui | Non | Non | Propriétaire de la chasse |
+| Rejoindre une chasse publiée | Non | Oui, sauf sa propre chasse | Non (sa propre chasse) | Déjà inscrit : refus (409) | Oui, sauf sa propre chasse | Statut de la chasse + non-propriétaire |
+| Valider une étape | Non | Non | Non | Oui (sa participation) | Non | Propriétaire de la participation |
+| Voir sa progression et son résultat | Non | Non | Non | Oui | Non | Propriétaire de la participation |
+| Voir la liste des participants | Non | Non | Oui | Non | Non | Propriétaire de la chasse |
+| Signaler une chasse ou un organisateur | Non | Oui | Oui | Oui | Oui | Authentifié |
+| Consulter la liste des signalements | Non | Non | Non | Non | Oui | Type de compte Admin |
+| Bannir un compte | Non | Non | Non | Non | Oui | Type de compte Admin |
 
-Chaque ligne donne lieu à au moins un test d'autorisation : 401 sans session, 403 si l'utilisateur n'est ni Organisateur ni Joueur de la ressource, 404 ou 403 si la ressource appartient à un autre utilisateur.
+Chaque ligne donne lieu à au moins un test d'autorisation : 401 sans session, 403 si l'utilisateur n'est ni Organisateur ni Joueur de la ressource ni Admin quand l'action l'exige, 404 ou 403 si la ressource appartient à un autre utilisateur.
 
 ### 2.2 Écart avec le cadrage et limites assumées
 
 Le cadrage prévoyait un rôle choisi à l'inscription. L'équipe retient à la place **un rôle par chasse**, car il permet à chacun de créer et de rejoindre des chasses sans multiplier les comptes.  Cette décision sera consignée dans le journal des décisions.
 
-- **Règle associée** : on ne peut pas rejoindre sa propre chasse (l'Organisateur ne joue pas la sienne).
-- **Limite assumée** : n'importe quel utilisateur peut publier une chasse, sans validation ni modération (aucun signalement ni administrateur dans le MVP). À documenter comme telle.
-- **Extensibilité** : un futur rôle Partenaire ou Admin s'ajoutera comme un droit supplémentaire (type de compte ou permission sur une chasse).
+- **Règle associée** : on ne peut pas rejoindre sa propre chasse (l'Organisateur ne joue pas la sienne), mais il peut la tester en mode essai avant publication (voir M3, US-3.5).
+- **Limite assumée** : n'importe quel utilisateur peut publier une chasse sans validation préalable. La modération reste a posteriori, via le signalement traité par un Admin (voir M7), et non une validation systématique avant publication.
+- **Extensibilité** : un futur rôle Partenaire s'ajoutera comme un droit supplémentaire (type de compte ou permission sur une chasse), au même titre que le type de compte Admin introduit dans cette version.
 
 ## 3. Parcours de référence, règles métier et démonstration
 
@@ -168,7 +187,11 @@ Le scénario de référence du client est retenu. Six étapes doivent s'exécute
 | RM8 | Une chasse publiée ne peut plus voir ses étapes modifiées (évite d'invalider des progressions en cours, modification complète = Should hors MVP). |
 | RM9 | La comparaison des réponses est insensible à la casse, aux accents et aux espaces en début ou fin de saisie. |
 | RM10 | Un même utilisateur peut être Organisateur de certaines chasses et Joueur d'autres. Il n'existe pas de rôle global. |
-| RM11 | La suppression d'un compte est définitive et en cascade : elle supprime les chasses dont l'utilisateur est l'Organisateur (avec leurs étapes et toutes les participations des autres joueurs), ainsi que ses propres participations en tant que Joueur. Les chasses créées par d'autres ne sont pas modifiées. |
+| RM11 | La suppression volontaire de son propre compte par un utilisateur est définitive. Ses propres participations en tant que Joueur sont supprimées. Les chasses dont il est l'Organisateur ne sont plus listées publiquement (M2) ni rejoignables par de nouveaux joueurs, mais les participations déjà en cours sur ces chasses peuvent être terminées normalement par les joueurs concernés (progression, résultat et badge conservés). Les données personnelles de l'Organisateur (pseudo, e-mail, mot de passe) sont supprimées et seul un identifiant non personnel reste associé à ces chasses tant qu'une participation y est en cours. Les chasses créées par d'autres ne sont pas modifiées. |
+| RM12 | Le bannissement d'un compte par un Admin est définitif et en cascade totale il supprime les chasses dont l'utilisateur banni est l'Organisateur (avec leurs étapes et toutes les participations des autres joueurs, y compris celles en cours), ainsi que ses propres participations en tant que Joueur. Aucune donnée, y compris les entrées de journal le concernant, n'est conservée. Un e-mail est envoyé à chaque joueur dont une participation en cours est supprimée. |
+| RM13 | L'Organisateur d'une chasse en brouillon peut la parcourir en mode essai (aperçu des étapes et consignes) avant publication. Le mode essai ne crée pas de participation et n'enregistre aucun résultat. |
+| RM14 | Une chasse peut être publiée en mode privé : elle n'apparaît pas dans la liste publique (M2) mais reste accessible par lien direct ou par code d'invitation. |
+| RM15 | L'Organisateur peut fixer, à la publication ou tant que la chasse n'est pas fermée, une date de fermeture optionnelle. Passé cette date, la chasse n'est plus proposée aux nouveaux joueurs, mais les participations déjà en cours peuvent être terminées normalement. |
 
 ### 3.3 Scénario de démonstration
 
@@ -182,7 +205,7 @@ Le scénario de référence du client est retenu. Six étapes doivent s'exécute
 | 6 | Compte A | Ouvre sa vue de suivi | Compte B au statut « terminé » |
 | 7 | Compte B | Tente de modifier ou de publier la chasse du compte A | Accès refusé (403) |
 | 8 | Compte A | Tente de rejoindre sa propre chasse | Accès refusé (403) |
-| 9 | Compte A | Supprime son compte | Sa chasse et la participation du compte B disparaissent. A ne peut plus se connecter |
+| 9 | Compte A | Supprime son compte | Sa chasse disparaît de la liste publique et n'est plus rejoignable. A ne peut plus se connecter. Si le compte B avait déjà une participation en cours, il peut toujours la terminer |
 
 Ce scénario sert de test de bout en bout automatisé et de démonstration enregistrée (vidéo). Un jeu de données de démonstration (compte Organisateur de test, chasse d'exemple) sera fourni avec le prototype.
 
@@ -194,16 +217,18 @@ Chaque module correspond à une étape du scénario et à un lot Must. Les crit�
 
 | ID | User story | Critères d'acceptation |
 | --- | --- | --- |
-| US-1.1 | En tant que visiteur, je crée un compte | Champs : pseudo, e-mail, mot de passe (aucun rôle à choisir). E-mail unique. Mot de passe de 8 caractères minimum avec chiffre et caractère spécial, jamais stocké ni affiché en clair. Possibilité de se connecter via Google. Erreurs explicites par champ. |
+| US-1.1 | En tant que visiteur, je crée un compte | Champs : pseudo, e-mail, mot de passe (aucun rôle à choisir, le type de compte Admin n'est jamais proposé à l'inscription). E-mail unique. Mot de passe de 8 caractères minimum avec chiffre et caractère spécial, jamais stocké ni affiché en clair. Possibilité de se connecter via Google. Erreurs explicites par champ. |
 | US-1.2 | En tant qu'utilisateur, je me connecte et me déconnecte | Identifiants invalides : message générique, sans révéler si l'e-mail existe. Session sécurisée, qui expire. Limitation des tentatives de connexion. Déconnexion invalide la session. |
 | US-1.3 | En tant qu'utilisateur connecté, j'accède à mes deux espaces : « Jouer » et « Mes chasses » | Accueil sur la liste des chasses, accès à « Mes chasses » (celles que j'organise) et « Mes participations » (celles que je joue). Une route protégée renvoie 401 sans session, et 403 si je ne suis ni l'Organisateur ni le Joueur concerné. |
-| US-1.4 | En tant qu'utilisateur connecté, je supprime mon compte | Confirmation explicite, avec un avertissement clair sur ce qui sera perdu. Suppression en cascade : les chasses que j'ai créées sont supprimées avec leurs étapes et toutes les participations des autres joueurs à ces chasses. Mes participations aux chasses des autres sont supprimées avec ma progression, mes résultats et mes badges. Les chasses des autres ne sont pas modifiées. Ma session est fermée et je ne peux plus me connecter avec ces identifiants. L'opération est tout ou rien : jamais de suppression partielle. |
+| US-1.4 | En tant qu'utilisateur connecté, je supprime mon compte | Confirmation explicite, avec un avertissement clair sur ce qui sera perdu (RM11). Mes participations aux chasses des autres sont supprimées avec ma progression, mes résultats et mes badges. Les chasses que j'ai créées ne sont plus listées publiquement ni rejoignables, mais les joueurs ayant déjà une participation en cours peuvent la terminer. Mes données personnelles sont supprimées. Les chasses des autres ne sont pas modifiées. Ma session est fermée et je ne peux plus me connecter avec ces identifiants. L'opération est tout ou rien : jamais de suppression partielle. |
+| US-1.5 | En tant que visiteur, je confirme mon e-mail après l'inscription | Un lien de confirmation à usage unique et à durée limitée est envoyé par e-mail. Le compte reste utilisable avant confirmation mais un rappel est affiché. Lien expiré ou déjà utilisé : message explicite et possibilité de le renvoyer. |
+| US-1.6 | En tant qu'utilisateur, je réinitialise mon mot de passe oublié | Demande par e-mail, lien à usage unique et à durée limitée, aucune confirmation de l'existence du compte dans la réponse (comme US-1.2). Le nouveau mot de passe suit les mêmes règles que US-1.1. Toutes les sessions actives sont invalidées après réinitialisation. |
 
 ### M2 - Liste des chasses publiées
 
 | ID | User story | Critères d'acceptation |
 | --- | --- | --- |
-| US-2.1 | En tant qu'utilisateur connecté, je consulte les chasses publiées | Affiche titre, description courte, nombre d'étapes, organisateur. Aucune chasse brouillon. Liste paginée (20 par page). État vide explicite. |
+| US-2.1 | En tant qu'utilisateur connecté, je consulte les chasses publiées | Affiche titre, description courte, nombre d'étapes, organisateur. Aucune chasse brouillon, aucune chasse privée (US-3.6), aucune chasse dont la date de fermeture (US-3.7) est dépassée. Liste paginée (20 par page). État vide explicite. |
 | US-2.2 | En tant qu'utilisateur connecté, j'ouvre le détail d'une chasse | Affiche description et nombre d'étapes, jamais le contenu des étapes ni les réponses. Bouton « Rejoindre » ou « Reprendre » selon l'état de ma participation, et aucun bouton si j'en suis l'Organisateur. |
 
 ### M3 - Création et publication d'une chasse (Organisateur)
@@ -212,8 +237,11 @@ Chaque module correspond à une étape du scénario et à un lot Must. Les crit�
 | --- | --- | --- |
 | US-3.1 | En tant qu'utilisateur connecté, je crée une chasse en brouillon | Titre (3 à 100 caractères) et description (jusqu'à 1 000 caractères) validés côté serveur. La chasse m'appartient : j'en deviens l'Organisateur. |
 | US-3.2 | J'ajoute des étapes ordonnées | Chaque étape : titre, consigne (indice ou énigme), réponse attendue (relisible par l'Organisateur tant que la chasse est en brouillon, jamais visible d'un joueur), position. Ordre modifiable par réordonnancement. Suppression d'une étape tant que la chasse est en brouillon. |
-| US-3.3 | Je publie ma chasse | Refusée sans étape ou sans titre (RM4). Statut passe de brouillon à publiée et la chasse apparaît dans la liste. Action journalisée. |
+| US-3.3 | Je publie ma chasse | Refusée sans étape ou sans titre (RM4). Statut passe de brouillon à publiée et la chasse apparaît dans la liste (sauf si privée, US-3.6). Action journalisée. |
 | US-3.4 | Je vois la liste de mes chasses | Seules les miennes, avec statut et nombre de participants. |
+| US-3.5 | Je teste ma chasse en mode essai avant de la publier | Disponible uniquement sur une chasse en brouillon dont je suis l'Organisateur (RM13). Parcours identique à celui d'un Joueur (consignes, saisie de réponse, RM9) mais aucune participation ni résultat n'est enregistré. |
+| US-3.6 | Je choisis de publier ma chasse en privé | Une chasse privée n'apparaît pas dans la liste publique (US-2.1) mais reste accessible par un lien direct ou un code d'invitation que je peux partager (RM14). |
+| US-3.7 | Je fixe une date de fermeture optionnelle à ma chasse | Tant que la chasse n'est pas fermée, je peux fixer ou modifier cette date. Passée cette date, ma chasse n'est plus proposée aux nouveaux joueurs mais reste visible dans ma vue de suivi (M6) et les participations en cours peuvent être terminées (RM15). |
 
 Parcours conçu pour que la création d'une chasse de 3 étapes prenne moins de 5 minutes pour un utilisateur novice (cible à vérifier lors de l'essai avec un tiers).
 
@@ -221,7 +249,7 @@ Parcours conçu pour que la création d'une chasse de 3 étapes prenne moins de 
 
 | ID | User story | Critères d'acceptation |
 | --- | --- | --- |
-| US-4.1 | En tant qu'utilisateur connecté, je rejoins une chasse publiée dont je ne suis pas l'Organisateur | Création d'une participation (statut « en cours », étape 1, horodatage de début). Une seule participation active par chasse : un second essai renvoie la participation existante ou 409. Rejoindre sa propre chasse renvoie 403. Je deviens le Joueur de cette chasse. |
+| US-4.1 | En tant qu'utilisateur connecté, je rejoins une chasse publiée dont je ne suis pas l'Organisateur | Création d'une participation (statut « en cours », étape 1, horodatage de début). Une seule participation active par chasse : un second essai renvoie la participation existante ou 409. Rejoindre sa propre chasse renvoie 403. Une chasse privée (RM14) se rejoint uniquement via son lien ou son code. Une chasse dont la date de fermeture (RM15) est dépassée ne peut plus être rejointe (403). Je deviens le Joueur de cette chasse. |
 | US-4.2 | Je vois l'étape courante | Seule l'étape courante est renvoyée. Accès à une étape future refusé (403). |
 | US-4.3 | Je valide une étape en saisissant ma réponse | Comparaison côté serveur selon RM9. Bonne réponse : progression enregistrée immédiatement et étape suivante renvoyée. Mauvaise réponse : message d'erreur clair, aucun changement d'état, nombre d'essais enregistré. |
 | US-4.4 | Je reprends ma chasse après déconnexion | À la reconnexion, je retrouve l'étape courante exacte. L'état est conservé côté serveur, jamais déduit du navigateur. |
@@ -241,12 +269,21 @@ Parcours conçu pour que la création d'une chasse de 3 étapes prenne moins de 
 | US-6.1 | En tant qu'Organisateur, je vois les participants de ma chasse | Liste : pseudo, étape atteinte (X sur N), statut (en cours ou terminé), date de début, temps total si terminé. Uniquement pour mes chasses 403 sinon. |
 | US-6.2 | Je filtre par statut | Filtre « en cours » et « terminé » ; compteurs agrégés (nombre de participants, nombre de terminés). |
 
+### M7 - Signalement et modération (Admin)
+
+| ID | User story | Critères d'acceptation |
+| --- | --- | --- |
+| US-7.1 | En tant qu'utilisateur connecté, je signale une chasse ou un organisateur | Motif obligatoire. Le signalement est journalisé (TR-1). Aucune action automatique sur la chasse ou le compte signalé : le traitement est manuel par un Admin. |
+| US-7.2 | En tant qu'Admin, je consulte la liste des signalements | Liste : chasse ou compte signalé, motif, auteur du signalement, date. 403 pour un compte qui n'est pas de type Admin. |
+| US-7.3 | En tant qu'Admin, je bannis un compte | Confirmation explicite. Applique RM12 : suppression totale et immédiate du compte banni, de ses chasses, de toutes les participations associées (y compris en cours) et des entrées de journal le concernant. Un e-mail est envoyé à chaque joueur dont une participation en cours est supprimée. Action journalisée avant la suppression des journaux du compte banni lui-même. |
+
 ### Transverse - Journalisation des actions sensibles
 
 | ID | Exigence | Critères d'acceptation |
 | --- | --- | --- |
-| TR-1 | Journaliser les actions sensibles | Sont journalisés : inscription, connexion réussie ou échouée, publication de chasse, inscription à une chasse, validation d'étape (succès ou échec), refus d'autorisation. Chaque entrée : horodatage, acteur, action, ressource, résultat. Jamais de mot de passe ni de réponse attendue dans les logs. |
+| TR-1 | Journaliser les actions sensibles | Sont journalisés : inscription, connexion réussie ou échouée, publication de chasse, inscription à une chasse, validation d'étape (succès ou échec), refus d'autorisation, signalement, bannissement. Chaque entrée : horodatage, acteur, action, ressource, résultat. Jamais de mot de passe ni de réponse attendue dans les logs. |
 | TR-2 | Gestion des erreurs | Messages d'erreur clairs, aucune information technique exposée à l'utilisateur. |
+| TR-3 | Journal et suppression de compte | Suppression volontaire (RM11) : les entrées existantes sont conservées mais l'acteur est anonymisé (remplacé par un identifiant non personnel). Bannissement (RM12) : les entrées concernant le compte banni sont supprimées avec le reste de ses données. |
 
 ## 5. Exigences non fonctionnelles
 
@@ -279,7 +316,8 @@ Ces exigences décrivent le niveau attendu, pas la façon de l'obtenir : les moy
 - Données collectées limitées au strict nécessaire : e-mail, pseudo, mot de passe, historique de participation.
 - Aucune géolocalisation.
 - Information claire à l'inscription, finalités et durées de conservation documentées.
-- Suppression de compte à tout moment (US-1.4) : les données personnelles de l'utilisateur et les contenus qui lui sont rattachés sont supprimés en cascade.
+- Suppression de compte à tout moment (US-1.4) : les données personnelles de l'utilisateur sont supprimées. Ses propres participations sont supprimées avec elles. Ses chasses ne restent accessibles qu'aux joueurs ayant déjà une participation en cours, sans donnée personnelle rattachée (RM11, TR-3).
+- Bannissement par un Admin (US-7.3) : suppression totale, sans anonymisation ni conservation (RM12, TR-3).
 - Comptes et chasses fictifs en démonstration.
 
 ### 5.5 Maintenabilité et reproductibilité
@@ -370,16 +408,18 @@ Une user story est terminée lorsque :
 - **Réglementaire et qualité** : respect du RGPD (données minimales, aucune géolocalisation), accessibilité WCAG 2.1 AA sur les écrans du scénario, qualité et sécurité prouvées par des tests et des revues.
 - **Équipe** : cinq personnes, un référent et un suppléant par domaine, contributions nominatives (tickets, commits, revues).
 
-### 8.3 Questions à débattre
+### 8.3 Questions tranchées
 
-- **Tester sa propre chasse** : l'Organisateur peut-il parcourir sa chasse en mode essai avant de la publier, puisqu'il ne peut pas la rejoindre ?
-- **Modération** : accepte-t-on que tout utilisateur publie sans validation (limite documentée), ou prévoit-on au minimum un signalement ?
-- **Groupes de joueurs** : Prévoit-on des chasses par équipe
-- **Mot de passe oublié et confirmation d'e-mail** : hors MVP, à confirmer.
-- **Langue de l'interface** : français seul pour le MVP ?
-- **Réponses tolérantes** : accepter plusieurs réponses valides par étape (variantes) dès le MVP, ou une seule ?
+Toutes les questions de la version 0.2 ont été tranchées en équipe et intégrées dans ce document (sections 1 à 7). Le détail de chaque décision (contexte, options, raison, conséquences, condition de réexamen) figure dans le journal des décisions, entrées D-005 à D-012 :
 
-* **Joueurs d'une chasse supprimée** : faut-il les prévenir, ou accepte-t-on qu'ils perdent leur progression et leur badge quand l'Organisateur supprime son compte ?
-* **Journal des actions sensibles après suppression** : les entrées d'un compte supprimé sont-elles anonymisées ou supprimées aussi (RGPD et traçabilité) ?
+- **Tester sa propre chasse** : oui, en mode essai (RM13, US-3.5).
+- **Modération** : signalement par tout utilisateur, traité par un Admin qui peut bannir un compte (M7, RM12).
+- **Groupes de joueurs** : chasses par équipe confirmées hors périmètre du MVP.
+- **Mot de passe oublié et confirmation d'e-mail** : intégrés au MVP (US-1.5, US-1.6).
+- **Langue de l'interface** : français seul pour le MVP.
+- **Réponses tolérantes** : point non traité pour le MVP, une seule réponse attendue par étape reste la règle (RM9).
+- **Joueurs d'une chasse supprimée** : suppression volontaire par l'Organisateur, les participations en cours peuvent être terminées (RM11) ; bannissement par un Admin, suppression totale et e-mail aux joueurs concernés (RM12).
+- **Journal des actions sensibles après suppression** : anonymisé en cas de suppression volontaire, supprimé en cas de bannissement (TR-3).
+- **Chasses privées** : oui, accessibles par lien ou code d'invitation (RM14, US-3.6).
 
-- **Chasses privées** : peut-on créer une chasse non listée publiquement, accessible seulement par lien ou code d'invitation ? À poser au client.
+Aucune question ouverte à ce stade.

@@ -8,7 +8,7 @@
 | **Statut** | Proposition à valider par l'équipe, référent Données et sécurité |
 | **Documents liés** | [Synthèse des réponses du jalon 2](synthese-reponses-jalon-2.md), [Cahier des charges](../cadrage/cahier-des-charges.md), [schema.sql](schema.sql) |
 
-Ce document décrit le modèle de données proposé pour répondre au cahier des charges v1.1 et aux décisions du 26/10/2026. Les neuf entités ont été acceptées « pour l'instant » par l'équipe. Le script [schema.sql](schema.sql) est la traduction en PostgreSQL : il a été chargé sur PostgreSQL 16 et ses contraintes ont été essayées avec des données fictives (rejeu refusé, chasse privée sans code refusée, compte supprimé avec données personnelles refusé, etc.).
+Ce document décrit le modèle de données proposé pour répondre au cahier des charges v1.2 et aux décisions du 26/10/2026. Les neuf entités ont été acceptées « pour l'instant » par l'équipe. Le script [schema.sql](schema.sql) est la traduction en PostgreSQL : il a été chargé sur PostgreSQL 16 et ses contraintes ont été essayées avec des données fictives (rejeu refusé, chasse privée sans code refusée, compte supprimé avec données personnelles refusé, etc.).
 
 Déclaration d'usage de l'IA : rédigé avec l'aide de Claude (Anthropic). Selon la politique d'usage de l'IA, le choix final est pris et justifié par l'équipe dans le journal des décisions, et le script n'est exécuté que par un humain sur une base locale.
 
@@ -22,98 +22,138 @@ Déclaration d'usage de l'IA : rédigé avec l'aide de Claude (Anthropic). Selon
 - **Aucune saisie de joueur stockée.** Une tentative enregistre seulement l'étape, la date et le résultat (TR-1).
 - **Réponse attendue** stockée en clair pour que l'Organisateur la relise en brouillon (US-3.2), avec sa forme normalisée (RM9) pour la comparaison. Elle ne sort jamais de l'API (RM6, Q23).
 
-## 2. Diagramme entité-relation
+## 2. Diagrammes de classes (UML)
+
+Le modèle est représenté en UML, en deux diagrammes de classes pour rester lisible. Chaque classe correspond à une table de [schema.sql](schema.sql) (même nom, en majuscule initiale).
+
+Lecture des diagrammes :
+
+- Une association porte sa multiplicité à chaque extrémité : `1`, `0..1`, `0..*` ou `1..*`.
+- Un losange plein indique une composition : les parties n'existent pas sans leur tout. Les étapes disparaissent avec leur chasse, les tentatives et le badge avec leur participation.
+- Un attribut marqué `[0..1]` peut être nul. Les autres sont obligatoires.
+- Les clés étrangères ne sont pas dessinées : elles sont portées par les associations et se lisent dans `schema.sql`.
+- Les types en minuscules et avec des tirets bas (`hunt_status`, par exemple) sont des énumérations, listées plus bas.
+
+### 2.1 Comptes, chasses et participations
 
 ```mermaid
-erDiagram
-    USERS ||--o{ HUNTS : "organise"
-    USERS ||--o{ PARTICIPATIONS : "joue"
-    USERS ||--o{ AUTH_TOKENS : "recoit"
-    USERS ||--o{ REPORTS : "signale"
-    USERS ||--o{ AUDIT_LOGS : "agit"
-    HUNTS ||--|{ STEPS : "contient"
-    HUNTS ||--o{ PARTICIPATIONS : "est jouee"
-    HUNTS ||--o{ REPORTS : "est visee par"
-    PARTICIPATIONS ||--o{ ATTEMPTS : "enregistre"
-    STEPS ||--o{ ATTEMPTS : "concerne"
-    PARTICIPATIONS ||--o| BADGES : "obtient"
+classDiagram
+    direction TB
+    class Users {
+        +id : uuid
+        +email : text [0..1]
+        +pseudo : text [0..1]
+        +password_hash : text [0..1]
+        +google_subject : text [0..1]
+        +account_type : account_type
+        +status : account_status
+        +email_verified_at : timestamptz [0..1]
+    }
+    class Hunts {
+        +id : uuid
+        +title : text
+        +description : text
+        +status : hunt_status
+        +visibility : hunt_visibility
+        +invitation_code : char6 [0..1]
+        +closes_at : timestamptz [0..1]
+        +closing_at : timestamptz [0..1]
+        +closed_at : timestamptz [0..1]
+        +end_reason : hunt_end_reason [0..1]
+    }
+    class Steps {
+        +id : uuid
+        +position : int
+        +instruction : text
+        +expected_answer : text
+        +expected_answer_normalized : text
+    }
+    class Participations {
+        +id : uuid
+        +status : participation_status
+        +validated_steps : int
+        +active_seconds : int
+        +completed_at : timestamptz [0..1]
+        +closure_notified_at : timestamptz [0..1]
+    }
+    class Attempts {
+        +id : uuid
+        +is_correct : boolean
+    }
+    class Badges {
+        +id : uuid
+        +code : text
+    }
 
-    USERS {
-        uuid id PK
-        text email "nul si compte supprime"
-        text pseudo "nul si compte supprime"
-        text password_hash "nul si Google"
-        text google_subject "unique"
-        enum account_type "user ou admin"
-        enum status "active, deleted, banned"
-        timestamptz email_verified_at
-    }
-    HUNTS {
-        uuid id PK
-        uuid owner_id FK
-        text title
-        text description
-        enum status "draft, published, closing, closed"
-        enum visibility "public ou private"
-        char invitation_code "6 caracteres, si privee"
-        timestamptz closes_at "optionnelle"
-        timestamptz closing_at "debut de fermeture"
-        timestamptz closed_at "fermeture effective"
-        enum end_reason "owner_deleted"
-    }
-    STEPS {
-        uuid id PK
-        uuid hunt_id FK
-        int position "unique par chasse"
-        text instruction
-        text expected_answer
-        text expected_answer_normalized
-    }
-    PARTICIPATIONS {
-        uuid id PK
-        uuid hunt_id FK
-        uuid player_id FK
-        enum status "in_progress ou completed"
-        int validated_steps
-        int active_seconds "compteur de jeu"
-        timestamptz completed_at
-        timestamptz closure_notified_at "e-mail de fermeture"
-    }
-    ATTEMPTS {
-        uuid id PK
-        uuid participation_id FK
-        uuid step_id FK
-        boolean is_correct
-    }
-    BADGES {
-        uuid id PK
-        uuid participation_id FK
-        text code "completion"
-    }
-    REPORTS {
-        uuid id PK
-        uuid reporter_id FK
-        uuid target_hunt_id FK
-        uuid target_user_id FK
-        text reason
-    }
-    AUTH_TOKENS {
-        uuid id PK
-        uuid user_id FK
-        enum purpose "confirmation ou reinitialisation"
-        text token_hash
-        timestamptz expires_at
-        timestamptz used_at
-    }
-    AUDIT_LOGS {
-        bigint id PK
-        uuid actor_id FK
-        enum action
-        enum resource_type
-        uuid resource_id
-        enum result
-    }
+    Users "1" -- "0..*" Hunts : organise
+    Users "1" -- "0..*" Participations : joue
+    Hunts "1" *-- "1..*" Steps : contient
+    Hunts "1" -- "0..*" Participations : est jouée
+    Participations "1" *-- "0..*" Attempts : enregistre
+    Steps "1" -- "0..*" Attempts : concerne
+    Participations "1" *-- "0..1" Badges : obtient
 ```
+
+### 2.2 Comptes, signalements et journal
+
+```mermaid
+classDiagram
+    direction TB
+    class Users {
+        +id : uuid
+        +email : text [0..1]
+        +pseudo : text [0..1]
+        +password_hash : text [0..1]
+        +google_subject : text [0..1]
+        +account_type : account_type
+        +status : account_status
+        +email_verified_at : timestamptz [0..1]
+    }
+    class Hunts {
+        +id : uuid
+    }
+    class AuthTokens {
+        +id : uuid
+        +purpose : token_purpose
+        +token_hash : text
+        +expires_at : timestamptz
+        +used_at : timestamptz [0..1]
+    }
+    class Reports {
+        +id : uuid
+        +reason : text
+    }
+    class AuditLogs {
+        +id : bigint
+        +action : audit_action
+        +resource_type : audit_resource_type
+        +resource_id : uuid [0..1]
+        +result : audit_result
+    }
+
+    Users "1" -- "0..*" AuthTokens : reçoit
+    Users "0..1" -- "0..*" AuditLogs : agit
+    Users "1" -- "0..*" Reports : signale (auteur)
+    Users "0..1" -- "0..*" Reports : cible
+    Hunts "0..1" -- "0..*" Reports : cible
+```
+
+Dans ce second diagramme, la classe `Hunts` est réduite à son identifiant : ses attributs sont dans le diagramme précédent. Un signalement vise soit une chasse, soit un compte, jamais les deux (contrainte en base). Le journal garde l'identifiant de l'acteur, qui reste non personnel même après une suppression ou un bannissement.
+
+### 2.3 Énumérations
+
+| Type | Valeurs |
+| --- | --- |
+| `account_type` | `user`, `admin` |
+| `account_status` | `active`, `deleted`, `banned` |
+| `hunt_status` | `draft`, `published`, `closing`, `closed` |
+| `hunt_visibility` | `public`, `private` |
+| `hunt_end_reason` | `owner_deleted` |
+| `participation_status` | `in_progress`, `completed` |
+| `token_purpose` | `email_confirmation`, `password_reset` |
+| `audit_result` | `success`, `failure` |
+
+Les types `audit_action` et `audit_resource_type` énumèrent les actions de TR-1 et les ressources concernées : leurs valeurs sont dans `schema.sql`.
 
 ## 3. Entités
 

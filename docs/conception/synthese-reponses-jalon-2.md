@@ -11,7 +11,7 @@
 
 Ce document reprend les réponses de l'équipe, dans l'ordre des questions (Q1 à Q26), et signale ce qu'elles changent dans le cahier des charges v1.1. Il distingue ce que l'équipe a décidé de ce que Claude a proposé pour compléter. Rien ici n'est une décision tant que l'équipe ne l'a pas validée.
 
-Mise à jour de 15h55 le 26/10/2026 : l'équipe a répondu aux points P1 à P5. Leurs réponses sont intégrées ci-dessous (Q5, Q6, Q15, Q21 et section 2). L'équipe prévoit de mettre ensuite le cahier des charges à jour, la section 4 liste ce qui est à reporter.
+Mise à jour de 15h55 le 26/10/2026 : l'équipe a répondu aux points P1 à P5. Leurs réponses sont intégrées ci-dessous (Q5, Q6, Q15, Q21 et section 2). Le cahier des charges a ensuite été mis à jour en version 1.2 (proposition rédigée avec Claude, à relire par l'équipe). La section 4 liste ce qui reste à reporter dans les autres documents : analyse des risques et journal des décisions.
 
 Déclaration d'usage de l'IA (politique d'usage de l'IA, principe 5) : synthèse rédigée avec l'aide de Claude (Anthropic) à partir des réponses de l'équipe. Ce document n'est pas le journal des décisions : la gestion de projet et le journal sont tenus par l'équipe seule. Les sections 1 et 2 fournissent la matière, chaque entrée du journal (à partir de D-013) est à rédiger par l'équipe.
 

@@ -80,8 +80,8 @@ Ce cahier des charges décrit **ce que le MVP doit faire**. Les choix techniques
 | --- | --- | --- |
 | Inscription, connexion, rôles Organisateur et Joueur attribués par chasse | Must | M1 |
 | Suppression de compte en cascade (chasses créées et participations) | Must | M1 |
-| Création d'une chasse (titre, description, étapes ordonnées) et publication | Must | M2 |
-| Liste des chasses publiées | Must | M3 |
+| Création d'une chasse (titre, description, étapes ordonnées) et publication | Must | M3 |
+| Liste des chasses publiées | Must | M2 |
 | Inscription d'un joueur à une chasse | Must | M4 |
 | Progression par étapes et énigmes, validation côté serveur | Must | M4 |
 | Progression conservée entre les sessions | Must | M4 |
@@ -111,7 +111,7 @@ Règle de coupe : en cas de dérive, les Could sautent en premier, puis les Shou
 | Rôle Partenaire | Troisième rôle sans utilité pour la boucle | Un besoin partenaire est identifié |
 | Application mobile native | Le web responsive suffit (PWA possible) | Fonctions natives nécessaires |
 | Classements | Pas de sens sans volume de joueurs&#32; | Après un déploiement réel |
-| Notifications générales (rappels, réengagement) | Inutiles à la démonstration. Seul le cas du bannissement nécessite un e-mail (voir M7 et RM13) | Besoin de réengagement |
+| Notifications générales (rappels, réengagement) | Inutiles à la démonstration. Seul le cas du bannissement nécessite un e-mail (voir M7 et RM12) | Besoin de réengagement |
 | Administration complète (tableau de bord, gestion globale des comptes et des chasses) | Modération minimale (signalement et bannissement, voir M7) nécessaire pour le MVP | Besoin d'une administration plus large |
 | Chasse par équipe | Hors scénario de référence, complexité de progression partagée non nécessaire au MVP | Besoin confirmé après le MVP |
 | Multilinguisme | Le français seul suffit pour le MVP | Besoin international identifié |

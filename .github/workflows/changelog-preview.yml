@@ -17,6 +17,9 @@ jobs:
         with:
           ref: develop
           fetch-depth: 0
+          # PAT d'un admin du repo (present dans la bypass list du ruleset) :
+          # le GITHUB_TOKEN par defaut ne peut pas pousser sur develop protegee.
+          token: ${{ secrets.CHANGELOG_PUSH_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:

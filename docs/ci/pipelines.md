@@ -9,6 +9,7 @@
   - [Tests manuels à effectuer](#tests-manuels-à-effectuer)
 - [Changelog et tag de version](#changelog-et-tag-de-version)
   - [Prérequis GitHub](#prérequis-github)
+  - [Pousser sur `develop` protégée](#pousser-sur-develop-protégée)
   - [Fonctionnement](#fonctionnement-1)
   - [Calcul de la version](#calcul-de-la-version)
   - [Répartition par section](#répartition-par-section)
@@ -68,6 +69,18 @@ Ces workflows poussent des commits (`changelog-preview.yml` sur `develop`) et de
 4. Sauvegarder.
 
 Ce réglage définit un plafond global pour le dépôt : même si un workflow demande `contents: write` dans son YAML, GitHub le limite quand même à la lecture seule tant que ce paramètre n'est pas passé sur "Read and write". C'est ce qui bloquait le push initialement pendant les tests (le job restait en attente d'approbation/échouait silencieusement sur le push).
+
+### Pousser sur `develop` protégée
+
+`develop` est protégée par un ruleset (pull request et status checks obligatoires). Le `GITHUB_TOKEN` du workflow ne figure pas dans la bypass list et son push est refusé. `changelog-preview.yml` pousse donc avec un token personnel d'un admin du repo, qui a le bypass via le rôle **Repository admin** :
+
+1. Compte GitHub d'un admin → **Settings** → **Developer settings** → **Personal access tokens** → **Fine-grained tokens** → **Generate new token**.
+2. **Resource owner** : l'organisation `PROJET-ETUDE-LOOTOPIA` (si elle exige une approbation des tokens, un owner doit l'approuver). **Repository access** : `Only select repositories` → Lootopia.
+3. **Repository permissions** → **Contents** : `Read and write`. Choisir une expiration et noter la date pour le renouveler.
+4. Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret** nommé `CHANGELOG_PUSH_TOKEN`, avec le token comme valeur.
+5. Dans le ruleset de `develop`, vérifier que **Repository admin** est dans la **Bypass list** (mode `Always allow`).
+
+Le token est lié à une personne : s'il expire ou si elle quitte l'organisation, le push du changelog échoue jusqu'à son remplacement.
 
 - [.github/workflows/changelog-preview.yml](../../.github/workflows/changelog-preview.yml) : se déclenche à l'ouverture ou la mise à jour de la PR. Calcule la prochaine version et écrit la section de changelog correspondante, puis pousse un commit directement sur `develop` (donc visible dans le diff de la PR avant le merge).
 - [.github/workflows/release-tag.yml](../../.github/workflows/release-tag.yml) : se déclenche quand cette PR est **mergée**. Relit la version déjà écrite en tête de `CHANGELOG.md` (elle vient d'arriver sur `main` via le merge) et crée le tag git correspondant.

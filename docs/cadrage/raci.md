@@ -24,3 +24,15 @@
 | Back et API | Alexis B. | Alexis C. |
 | Données et sécurité | Arthur | Alexis B. |
 | Qualité, CI/CD et documentation | Mathéo | Elias |
+
+Les postes ne sont pas nécessairements fixes et peuvent évoluer au fur et à mesure en fonction des disposinibiltés des membres.
+
+## 2. Temps de travail semaine par personne
+
+ Personne | Temps(h) |
+ --- | --- |
+| Elias | 3h |
+| Alexis C. | 2h |
+| Alexis B. | 3h |
+| Arthur | 3h |
+| Mathéo | 2h |

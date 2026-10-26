@@ -5,11 +5,12 @@
 | | |
 | --- | --- |
 | **Document** | Cahier des charges, Lootopia (MVP) |
-| **Version** | 0.3 |
+| **Version** | 1.0 |
 | **Date** | 26/10/2026 |
-| **Statut** | Brouillon, en attente de validation par l'équipe |
+| **Statut** | Validé par l'équipe |
 | **Rédacteurs** | Mathéo Souchet, Elias Forget, Alexis Ballenghien, Alexis Cantin, Arthur Millet |
 | **Document de référence** | Note de cadrage v1.0 du 28/09/2026 |
+| **Documents liés** | [Journal des décisions](journal-des-decisions.md), [Politique d'usage de l'IA](politique-IA.md) |
 
 ### Historique des versions
 
@@ -53,7 +54,8 @@
   - [7.2 Règles de pilotage](#72-règles-de-pilotage)
   - [7.3 Backlog initial](#73-backlog-initial)
   - [7.4 Responsabilités](#74-responsabilités)
-  - [7.5 Definition of Done](#75-definition-of-done)
+  - [7.5 Definition of Ready](#75-definition-of-ready)
+  - [7.6 Definition of Done](#76-definition-of-done)
 - [8. Risques, contraintes et questions](#8-risques-contraintes-et-questions)
   - [8.1 Risques](#81-risques)
   - [8.2 Contraintes](#82-contraintes)
@@ -326,6 +328,7 @@ Ces exigences décrivent le niveau attendu, pas la façon de l'obtenir : les moy
 - Architecture, API et choix techniques documentés, un tiers retrouve où modifier une règle de progression.
 - Les choix techniques importants sont consignés dans le journal des décisions.
 - Un jeu de données de démonstration est fourni.
+- L'usage de l'IA sur le projet suit la [politique d'usage de l'IA](politique-IA.md) : responsabilité humaine, compréhension obligatoire de ce qui est livré, moindre accès et transparence.
 
 ## 6. Critères de réussite
 
@@ -374,7 +377,17 @@ Le backlog unique reprend les user stories de la section 4, avec pour chacune : 
 | Données et sécurité | Arthur | Alexis B. |
 | Qualité, CI/CD et documentation | Mathéo | Elias |
 
-### 7.5 Definition of Done
+### 7.5 Definition of Ready
+
+Une user story peut entrer en développement lorsque :
+
+- ses critères d'acceptation sont rédigés et compris par celui qui va l'implémenter
+- elle est rattachée à un module et à une priorité MoSCoW (section 1.2)
+- les règles métier et permissions concernées sont identifiées (sections 2.1 et 3.2)
+- sa dépendance à une autre user story, si elle existe, est levée ou planifiée avant elle
+- son référent de domaine l'a revue et ne voit pas de point bloquant.
+
+### 7.6 Definition of Done
 
 Une user story est terminée lorsque :
 

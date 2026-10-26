@@ -73,10 +73,10 @@ Ce cahier des charges décrit **ce que le MVP doit faire**. Les choix techniques
 
 | Fonction | Priorité | Lot MVP |
 | --- | --- | --- |
-| Inscription, connexion ; rôles Organisateur et Joueur attribués par chasse | Must | M1 |
+| Inscription, connexion, rôles Organisateur et Joueur attribués par chasse | Must | M1 |
 | Suppression de compte en cascade (chasses créées et participations) | Must | M1 |
-| Liste des chasses publiées | Must | M2 |
-| Création d'une chasse (titre, description, étapes ordonnées) et publication | Must | M3 |
+| Création d'une chasse (titre, description, étapes ordonnées) et publication | Must | M2 |
+| Liste des chasses publiées | Must | M3 |
 | Inscription d'un joueur à une chasse | Must | M4 |
 | Progression par étapes et énigmes, validation côté serveur | Must | M4 |
 | Progression conservée entre les sessions | Must | M4 |

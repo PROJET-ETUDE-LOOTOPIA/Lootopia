@@ -9,6 +9,21 @@ const TYPES = [
 
 const MAX_SUBJECT_LENGTH = 72;
 
+// Extrait { type, scope, subject } d'un header, ou null s'il ne correspond
+// pas du tout au format <type>(<scope>): <description>.
+// Ne valide pas les regles (type autorise, casse, etc.), juste la forme.
+function parseHeader(header) {
+  const match = header.match(/^([a-zA-Z-]+)(\(([^)]+)\))?:\s?(.*)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  const [, type, , scope, subject] = match;
+
+  return { type, scope: scope || null, subject };
+}
+
 function validateHeader(header) {
   if (!header || !header.trim()) {
     return {
@@ -73,4 +88,4 @@ function validateHeader(header) {
   return { valid: true };
 }
 
-module.exports = { validateHeader, TYPES, MAX_SUBJECT_LENGTH };
+module.exports = { validateHeader, parseHeader, TYPES, MAX_SUBJECT_LENGTH };

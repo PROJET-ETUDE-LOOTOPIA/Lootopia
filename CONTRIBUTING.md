@@ -27,7 +27,7 @@ Types autorisés :
 - `chore/` : tâches diverses (configuration, dépendances, outillage)
 - `ci/` : tâches liées à l'intégration continue
 
-La description doit être courte, en minuscules, en anglais ou en français (au choix mais rester cohérent dans le projet), avec des mots séparés par des tirets.
+La description doit être courte, en minuscules, en anglais ou en français (au choix mais rester cohérent dans le projet), avec des mots séparés par des tirets, sans accent ni caractère spécial (uniquement `a-z`, `0-9` et `-`).
 
 Exemples :
 

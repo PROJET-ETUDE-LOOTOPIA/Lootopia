@@ -2,6 +2,12 @@
 
 Ce document décrit les conventions à suivre pour contribuer au projet Lootopia.
 
+## Cadrage
+
+Le [cahier des charges](docs/cadrage/cahier-des-charges.md) du projet du projet est disponible au niveau de la documentation. Toutes les décisions liées au cadrage et aux différentes prises de décisions modifiant le périmètre du projet sont consignées dans un [journal des décisions](docs/cadrage/journal-des-decisions.md).
+
+Chaque nouvelle décision doit être renseignée dans ce même journal en suivant le mode d'emploi.
+
 ## Conventions de nommage des branches
 
 Les branches doivent suivre le format suivant :
@@ -21,7 +27,7 @@ Types autorisés :
 - `chore/` : tâches diverses (configuration, dépendances, outillage)
 - `ci/` : tâches liées à l'intégration continue
 
-La description doit être courte, en minuscules, en anglais ou en français (au choix mais rester cohérent dans le projet), avec des mots séparés par des tirets.
+La description doit être courte, en minuscules, en anglais ou en français (au choix mais rester cohérent dans le projet), avec des mots séparés par des tirets, sans accent ni caractère spécial (uniquement `a-z`, `0-9` et `-`).
 
 Exemples :
 
@@ -69,7 +75,7 @@ docs(readme): met a jour les instructions d'installation
 chore(deps): met a jour les dependances
 ```
 
-Pour en savoir plus, n'hésitez pas à consulter la documentation associée : [Git hooks](ci/Hooks.md)
+Pour en savoir plus, n'hésitez pas à consulter la documentation associée : [Git hooks](ci/hooks.md)
 
 ## Conventions de nommage des pull requests
 

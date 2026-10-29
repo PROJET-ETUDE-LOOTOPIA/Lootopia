@@ -5,8 +5,8 @@
 | | |
 | --- | --- |
 | **Document** | Cahier des charges, Lootopia (MVP) |
-| **Version** | 1.2 |
-| **Date** | 26/10/2026 |
+| **Version** | 1.3 |
+| **Date** | 29/10/2026 |
 | **Statut** | À relire et valider par l'équipe |
 | **Rédacteurs** | Mathéo Souchet, Elias Forget, Alexis Ballenghien, Alexis Cantin, Arthur Millet |
 | **Document de référence** | Note de cadrage v1.0 du 28/09/2026 |
@@ -21,6 +21,7 @@
 | 0.3 | 26/10/2026 | Équipe | Réponses aux questions ouvertes intégrées : mode essai pour l'Organisateur, confirmation d'e-mail et mot de passe oublié, modération (signalement, rôle Admin, bannissement), distinction suppression volontaire et bannissement, chasses privées et date de fermeture optionnelle, langue française seule, chasse par équipe confirmée hors périmètre. Voir le journal des décisions D-005 à D-012 |
 | 1.1 | 26/10/2026 | Équipe | Jalons et règles de pilotage déplacés dans le [rétroplanning](retroplanning.md), responsabilités dans le [RACI](raci.md), risques dans l'[analyse des risques et plans B](analyse-des-risques.md). Les titres sont conservés et renvoient vers ces documents |
 | 1.2 | 26/10/2026 | Équipe, rédaction assistée par Claude (Anthropic) | Réponses de l'équipe au jalon 2 intégrées (voir la [synthèse](../conception/synthese-reponses-jalon-2.md)) : connexion Google et e-mails par Mailjet, une seule participation par joueur et par chasse, suppression de compte avec fermeture progressive des chasses, bannissement par anonymisation (compte conservé avec le statut « banni »), 403 pour toute ressource d'autrui, message neutre à l'inscription, temps de jeu mesuré par le serveur, fuseau de Paris, code d'invitation de 6 caractères, stack retenue. Questions encore ouvertes listées en 8.3. Les décisions ne sont pas encore au journal (entrées à partir de D-013, à rédiger par l'équipe). Mise à jour à relire par l'équipe |
+| 1.3 | 29/10/2026 | Équipe, rédaction assistée par Claude (Anthropic) | Retrait du journal des actions sensibles (TR-1 et TR-3 supprimées, TR-2 renumérotée TR-1). Complexité jugée disproportionnée par rapport à la valeur apportée pour le MVP, remplacé par du logging applicatif classique. Voir [D-013](journal-des-decisions.md#d-013--retrait-du-journal-des-actions-sensibles) |
 
 **Table des matières**
 
@@ -43,7 +44,7 @@
   - [M5 : Résultat final](#m5---résultat-final)
   - [M6 : Vue de suivi Organisateur](#m6---vue-de-suivi-organisateur)
   - [M7 : Signalement et modération (Admin)](#m7---signalement-et-modération-admin)
-  - [Transverse : Journalisation des actions sensibles](#transverse---journalisation-des-actions-sensibles)
+  - [Transverse : Gestion des erreurs](#transverse---gestion-des-erreurs)
 - [5. Exigences non fonctionnelles](#5-exigences-non-fonctionnelles)
   - [5.1 Sécurité](#51-sécurité)
   - [5.2 Accessibilité et UX](#52-accessibilité-et-ux)
@@ -88,7 +89,6 @@ Ce cahier des charges décrit **ce que le MVP doit faire**. Seule la stack reten
 | Progression conservée entre les sessions | Must | M4 |
 | Résultat final : badge de complétion, temps total, étapes franchies | Must | M5 |
 | Vue de suivi Organisateur | Must | M6 |
-| Journalisation des actions sensibles | Must | Transverse |
 | Confirmation d'e-mail à l'inscription et réinitialisation du mot de passe oublié | Must | M1 |
 | Mode essai d'une chasse par son Organisateur avant publication | Must | M3 |
 | Signalement d'une chasse ou d'un organisateur, rôle Admin et traitement des signalements (bannissement) | Must | M7 |
@@ -192,7 +192,7 @@ Le scénario de référence du client est retenu. Six étapes doivent s'exécute
 | RM9 | La comparaison des réponses est insensible à la casse, aux accents et aux espaces en début ou fin de saisie. Toute suite d'espaces à l'intérieur d'une réponse compte pour un seul espace. La même normalisation est appliquée à la réponse attendue et à la saisie du joueur. |
 | RM10 | Un même utilisateur peut être Organisateur de certaines chasses et Joueur d'autres. Il n'existe pas de rôle global. |
 | RM11 | La suppression volontaire de son propre compte par un utilisateur est définitive. Le compte reste en base sous un identifiant non personnel, avec le statut « supprimé » : son pseudo, son e-mail et son mot de passe sont supprimés et il ne peut plus se connecter. Ses brouillons et ses propres participations en tant que Joueur sont supprimés. Ses chasses publiées ne sont plus listées publiquement (M2) ni rejoignables par de nouveaux joueurs, affichent « compte supprimé » à la place de l'Organisateur et ne sont plus suivies. Elles ne sont jamais attribuées à un Admin. Les joueurs ayant une participation en cours peuvent la terminer normalement (progression, résultat et badge conservés) et sont prévenus par e-mail de la future fermeture de la chasse. Une chasse se ferme quand sa dernière participation en cours est terminée, ou tout de suite si aucune n'est en cours. Les chasses créées par d'autres ne sont pas modifiées. |
-| RM12 | Le bannissement d'un compte par un Admin est définitif. Le compte reste en base sous un identifiant non personnel, avec le statut « banni » : ses données personnelles (pseudo, e-mail, mot de passe) sont anonymisées et il ne peut plus se connecter. Ses chasses, brouillons compris, sont supprimées avec leurs étapes et toutes leurs participations, y compris celles en cours des autres joueurs, ainsi que ses propres participations en tant que Joueur. L'identifiant du compte banni est conservé dans le journal (TR-3). Un e-mail est envoyé à chaque joueur dont une participation en cours est supprimée. |
+| RM12 | Le bannissement d'un compte par un Admin est définitif. Le compte reste en base sous un identifiant non personnel, avec le statut « banni » : ses données personnelles (pseudo, e-mail, mot de passe) sont anonymisées et il ne peut plus se connecter. Ses chasses, brouillons compris, sont supprimées avec leurs étapes et toutes leurs participations, y compris celles en cours des autres joueurs, ainsi que ses propres participations en tant que Joueur. Un e-mail est envoyé à chaque joueur dont une participation en cours est supprimée. |
 | RM13 | L'Organisateur d'une chasse en brouillon peut la parcourir en mode essai (aperçu des étapes et consignes) avant publication. Le mode essai ne crée pas de participation et n'enregistre aucun résultat. |
 | RM14 | Une chasse peut être publiée en mode privé : elle n'apparaît pas dans la liste publique (M2) mais reste accessible par lien direct ou par code d'invitation. Le code d'invitation compte 6 caractères : des lettres majuscules et des chiffres. |
 | RM15 | L'Organisateur peut fixer, à la publication ou tant que la chasse n'est pas fermée, une date de fermeture optionnelle. Passé cette date, la chasse n'est plus proposée aux nouveaux joueurs, mais les participations déjà en cours peuvent être terminées normalement. La date est saisie et interprétée en heure de Paris. |
@@ -241,7 +241,7 @@ Chaque module correspond à une étape du scénario et à un lot Must. Les crit�
 | --- | --- | --- |
 | US-3.1 | En tant qu'utilisateur connecté, je crée une chasse en brouillon | Titre (3 à 100 caractères) et description (jusqu'à 1 000 caractères) validés côté serveur. La chasse m'appartient : j'en deviens l'Organisateur. |
 | US-3.2 | J'ajoute des étapes ordonnées | Chaque étape : titre, consigne (indice ou énigme), réponse attendue (relisible par l'Organisateur tant que la chasse est en brouillon, jamais visible d'un joueur), position. Ordre modifiable par réordonnancement. Suppression d'une étape tant que la chasse est en brouillon. |
-| US-3.3 | Je publie ma chasse | Refusée sans étape ou sans titre (RM4). Statut passe de brouillon à publiée et la chasse apparaît dans la liste (sauf si privée, US-3.6). Action journalisée. |
+| US-3.3 | Je publie ma chasse | Refusée sans étape ou sans titre (RM4). Statut passe de brouillon à publiée et la chasse apparaît dans la liste (sauf si privée, US-3.6). |
 | US-3.4 | Je vois la liste de mes chasses | Seules les miennes, avec statut et nombre de participants. |
 | US-3.5 | Je teste ma chasse en mode essai avant de la publier | Disponible uniquement sur une chasse en brouillon dont je suis l'Organisateur (RM13). Parcours identique à celui d'un Joueur (consignes, saisie de réponse, RM9) mais aucune participation ni résultat n'est enregistré. |
 | US-3.6 | Je choisis de publier ma chasse en privé | Une chasse privée n'apparaît pas dans la liste publique (US-2.1) mais reste accessible par un lien direct ou un code d'invitation de 6 caractères (lettres majuscules et chiffres) que je peux partager (RM14). |
@@ -278,17 +278,15 @@ Parcours conçu pour que la création d'une chasse de 3 étapes prenne moins de 
 
 | ID | User story | Critères d'acceptation |
 | --- | --- | --- |
-| US-7.1 | En tant qu'utilisateur connecté, je signale une chasse ou un organisateur | Motif obligatoire. Le signalement est journalisé (TR-1). Aucune action automatique sur la chasse ou le compte signalé : le traitement est manuel par un Admin. |
+| US-7.1 | En tant qu'utilisateur connecté, je signale une chasse ou un organisateur | Motif obligatoire. Aucune action automatique sur la chasse ou le compte signalé : le traitement est manuel par un Admin. |
 | US-7.2 | En tant qu'Admin, je consulte la liste des signalements | Liste : chasse ou compte signalé, motif, auteur du signalement, date. 403 pour un compte qui n'est pas de type Admin. |
-| US-7.3 | En tant qu'Admin, je bannis un compte | Confirmation explicite. Applique RM12 : le compte est conservé avec le statut « banni » et ses données personnelles sont anonymisées. Ses chasses sont supprimées avec leurs étapes et toutes leurs participations (y compris en cours), ainsi que ses propres participations. Un e-mail est envoyé à chaque joueur dont une participation en cours est supprimée. Action journalisée avec l'identifiant du compte banni. |
+| US-7.3 | En tant qu'Admin, je bannis un compte | Confirmation explicite. Applique RM12 : le compte est conservé avec le statut « banni » et ses données personnelles sont anonymisées. Ses chasses sont supprimées avec leurs étapes et toutes leurs participations (y compris en cours), ainsi que ses propres participations. Un e-mail est envoyé à chaque joueur dont une participation en cours est supprimée. |
 
-### Transverse - Journalisation des actions sensibles
+### Transverse - Gestion des erreurs
 
 | ID | Exigence | Critères d'acceptation |
 | --- | --- | --- |
-| TR-1 | Journaliser les actions sensibles | Sont journalisés : inscription, connexion réussie ou échouée, publication de chasse, inscription à une chasse, validation d'étape (succès ou échec), refus d'autorisation, signalement, bannissement. Chaque entrée : horodatage, acteur, action, ressource, résultat. Jamais de mot de passe ni de réponse attendue dans les logs. |
-| TR-2 | Gestion des erreurs | Messages d'erreur clairs, aucune information technique exposée à l'utilisateur. |
-| TR-3 | Journal et suppression de compte | Dans les deux cas (suppression volontaire RM11, bannissement RM12), le compte reste en base sous un identifiant non personnel et les entrées existantes sont conservées. Elles ne contiennent aucune donnée personnelle. L'entrée de bannissement porte l'identifiant du compte banni. |
+| TR-1 | Gestion des erreurs | Messages d'erreur clairs, aucune information technique exposée à l'utilisateur. |
 
 ## 5. Exigences non fonctionnelles
 
@@ -301,7 +299,7 @@ Ces exigences décrivent le niveau attendu, pas la façon de l'obtenir : les moy
 - La réponse attendue d'une étape n'est jamais transmise au navigateur : aucune réponse de l'API ne la contient, quel que soit le point d'accès, ce qu'un test vérifie.
 - Toutes les saisies sont validées côté serveur.
 - Aucun secret (mot de passe, clé) ne figure dans le dépôt de code.
-- Les actions sensibles sont journalisées (TR-1), sans mot de passe ni réponse attendue dans les journaux.
+- Un logging applicatif classique (framework retenu par la stack) trace les événements techniques et les erreurs, sans jamais inclure de mot de passe ni de réponse attendue.
 - Les messages d'erreur ne révèlent ni information technique ni l'existence d'un compte, y compris à l'inscription (US-1.1).
 - Un limiteur de débit protège les actions sensibles (connexion, validation de réponse, envoi d'e-mails). Ses valeurs seront fixées avant la construction.
 - Les liens envoyés par e-mail (confirmation, mot de passe oublié) sont à usage unique et de courte durée, car le fournisseur d'envoi a accès au contenu des e-mails.
@@ -327,8 +325,8 @@ Ces exigences décrivent le niveau attendu, pas la façon de l'obtenir : les moy
 - Sous-traitants : Mailjet reçoit les adresses e-mail et le contenu des e-mails transactionnels (hébergé dans l'UE selon l'équipe, à vérifier), Google fournit la connexion. Ils sont à inscrire dans le registre des traitements.
 - Aucune géolocalisation.
 - Information claire à l'inscription, finalités et durées de conservation documentées.
-- Suppression de compte à tout moment (US-1.4) : les données personnelles de l'utilisateur sont supprimées et le compte, conservé sous un identifiant non personnel, ne peut plus se connecter. Ses propres participations et ses brouillons sont supprimés. Ses chasses publiées ne restent ouvertes qu'aux joueurs ayant déjà une participation en cours, puis se ferment, sans donnée personnelle rattachée (RM11, TR-3).
-- Bannissement par un Admin (US-7.3) : les données personnelles du compte sont anonymisées, ses chasses et leurs participations sont supprimées. Seuls restent un identifiant non personnel et les entrées du journal (RM12, TR-3).
+- Suppression de compte à tout moment (US-1.4) : les données personnelles de l'utilisateur sont supprimées et le compte, conservé sous un identifiant non personnel, ne peut plus se connecter. Ses propres participations et ses brouillons sont supprimés. Ses chasses publiées ne restent ouvertes qu'aux joueurs ayant déjà une participation en cours, puis se ferment, sans donnée personnelle rattachée (RM11).
+- Bannissement par un Admin (US-7.3) : les données personnelles du compte sont anonymisées, ses chasses et leurs participations sont supprimées. Seul reste un identifiant non personnel (RM12).
 - Comptes et chasses fictifs en démonstration.
 
 ### 5.5 Maintenabilité et reproductibilité
@@ -390,7 +388,6 @@ Une user story est terminée lorsque :
 - elle est relue et approuvée par le référent du domaine, via une revue nominative
 - les saisies sont validées et les contrôles d'accès côté serveur sont testés
 - l'écran concerné est utilisable sur mobile et ordinateur, au clavier, sans erreur d'accessibilité bloquante
-- l'action sensible est journalisée si elle figure dans TR-1
 - la documentation est à jour
 - l'installation depuis zéro fonctionne toujours avec le README.
 
@@ -418,7 +415,6 @@ Les questions de la version 0.2 ont été tranchées en équipe et intégrées d
 - **Langue de l'interface** : français seul pour le MVP.
 - **Réponses tolérantes** : point non traité pour le MVP, une seule réponse attendue par étape reste la règle (RM9).
 - **Joueurs d'une chasse supprimée** : suppression volontaire par l'Organisateur, la chasse reste ouverte jusqu'à la fin des participations en cours et les joueurs sont prévenus par e-mail (RM11) ; bannissement par un Admin, chasses et participations supprimées et e-mail aux joueurs concernés (RM12).
-- **Journal des actions sensibles après suppression** : entrées conservées dans les deux cas, avec un identifiant non personnel (TR-3).
 - **Chasses privées** : oui, accessibles par lien ou code d'invitation (RM14, US-3.6).
 - **Services externes** : connexion Google et envoi d'e-mails par Mailjet, avec leurs limites et leurs solutions de remplacement (5.3).
 - **Rejeu d'une chasse** : non, une seule participation par joueur et par chasse (RM2).
@@ -427,6 +423,7 @@ Les questions de la version 0.2 ont été tranchées en équipe et intégrées d
 - **Temps total** : temps passé à jouer, mesuré par le serveur (RM7, US-4.6).
 - **Fuseau, code d'invitation, normalisation des réponses** : heure de Paris (RM15), 6 caractères (RM14), normalisation classique (RM9).
 - **Stack technique et hébergement** : voir 8.2.
+- **Journal des actions sensibles** : retiré du MVP, remplacé par du logging applicatif classique (D-013).
 
 Questions encore ouvertes :
 

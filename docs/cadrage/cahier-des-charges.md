@@ -5,7 +5,7 @@
 | | |
 | --- | --- |
 | **Document** | Cahier des charges, Lootopia (MVP) |
-| **Version** | 1.3 |
+| **Version** | 1.4 |
 | **Date** | 29/10/2026 |
 | **Statut** | À relire et valider par l'équipe |
 | **Rédacteurs** | Mathéo Souchet, Elias Forget, Alexis Ballenghien, Alexis Cantin, Arthur Millet |
@@ -22,6 +22,7 @@
 | 1.1 | 26/10/2026 | Équipe | Jalons et règles de pilotage déplacés dans le [rétroplanning](retroplanning.md), responsabilités dans le [RACI](raci.md), risques dans l'[analyse des risques et plans B](analyse-des-risques.md). Les titres sont conservés et renvoient vers ces documents |
 | 1.2 | 26/10/2026 | Équipe, rédaction assistée par Claude (Anthropic) | Réponses de l'équipe au jalon 2 intégrées (voir la [synthèse](../conception/synthese-reponses-jalon-2.md)) : connexion Google et e-mails par Mailjet, une seule participation par joueur et par chasse, suppression de compte avec fermeture progressive des chasses, bannissement par anonymisation (compte conservé avec le statut « banni »), 403 pour toute ressource d'autrui, message neutre à l'inscription, temps de jeu mesuré par le serveur, fuseau de Paris, code d'invitation de 6 caractères, stack retenue. Questions encore ouvertes listées en 8.3. Les décisions ne sont pas encore au journal (entrées à partir de D-013, à rédiger par l'équipe). Mise à jour à relire par l'équipe |
 | 1.3 | 29/10/2026 | Équipe, rédaction assistée par Claude (Anthropic) | Retrait du journal des actions sensibles (TR-1 et TR-3 supprimées, TR-2 renumérotée TR-1). Complexité jugée disproportionnée par rapport à la valeur apportée pour le MVP, remplacé par du logging applicatif classique. Voir [D-013](journal-des-decisions.md#d-013--retrait-du-journal-des-actions-sensibles) |
+| 1.4 | 29/10/2026 | Équipe, rédaction assistée par Claude (Anthropic) | RM15 alignée sur le même mécanisme de fermeture que RM11. Une chasse dont la date de fermeture est dépassée entre en fermeture (statut `closing` puis `closed`) comme pour une suppression volontaire, au lieu de rester indéfiniment `published`, sans e-mail de prévenance. Voir [D-014](journal-des-decisions.md#d-014--fermeture-dune-chasse-par-date-alignée-sur-rm11) |
 
 **Table des matières**
 
@@ -146,7 +147,7 @@ Un visiteur non connecté ne peut que s'inscrire ou se connecter.
 | Voir une chasse en brouillon | Non | Non | Oui | Non | Non | Propriétaire de la chasse |
 | Tester sa chasse en mode essai (aperçu) | Non | Non | Oui | Non | Non | Propriétaire de la chasse, chasse en brouillon |
 | Modifier les étapes, publier | Non | Non | Oui | Non | Non | Propriétaire de la chasse |
-| Rejoindre une chasse publiée | Non | Oui, sauf sa propre chasse | Non (sa propre chasse) | Déjà inscrit, même si la participation est terminée : refus (409) | Oui, sauf sa propre chasse | Chasse publiée et non en fermeture (RM11), non-propriétaire |
+| Rejoindre une chasse publiée | Non | Oui, sauf sa propre chasse | Non (sa propre chasse) | Déjà inscrit, même si la participation est terminée : refus (409) | Oui, sauf sa propre chasse | Chasse publiée et non en fermeture (RM11, RM15), non-propriétaire |
 | Valider une étape | Non | Non | Non | Oui (sa participation) | Non | Propriétaire de la participation |
 | Voir sa progression et son résultat | Non | Non | Non | Oui | Non | Propriétaire de la participation |
 | Voir la liste des participants | Non | Non | Oui | Non | Non | Propriétaire de la chasse |
@@ -182,7 +183,7 @@ Le scénario de référence du client est retenu. Six étapes doivent s'exécute
 | Réf. | Règle |
 | --- | --- |
 | RM1 | Tout utilisateur connecté peut créer une chasse et en devient l'Organisateur. Seul l'Organisateur d'une chasse la modifie, la publie et consulte ses participants. Un organisateur ne gère que ses propres chasses. |
-| RM2 | Tout utilisateur connecté, sauf l'Organisateur de la chasse, peut rejoindre une chasse publiée et en devient le Joueur. Il n'y a qu'une seule participation par joueur et par chasse, quel que soit son statut : une chasse terminée ne se rejoue pas. Une chasse en fermeture (RM11) ne peut plus être rejointe. |
+| RM2 | Tout utilisateur connecté, sauf l'Organisateur de la chasse, peut rejoindre une chasse publiée et en devient le Joueur. Il n'y a qu'une seule participation par joueur et par chasse, quel que soit son statut : une chasse terminée ne se rejoue pas. Une chasse en fermeture (RM11, RM15) ne peut plus être rejointe. |
 | RM3 | Seules les chasses publiées sont visibles des autres utilisateurs Un brouillon n'est visible que de son Organisateur. |
 | RM4 | Une chasse ne peut être publiée que si elle compte au moins 1 étape (3 pour la démo) et un titre non vide. |
 | RM5 | Les étapes se valident dans l'ordre : l'étape suivante n'est visible qu'après validation de la courante. |
@@ -195,7 +196,7 @@ Le scénario de référence du client est retenu. Six étapes doivent s'exécute
 | RM12 | Le bannissement d'un compte par un Admin est définitif. Le compte reste en base sous un identifiant non personnel, avec le statut « banni » : ses données personnelles (pseudo, e-mail, mot de passe) sont anonymisées et il ne peut plus se connecter. Ses chasses, brouillons compris, sont supprimées avec leurs étapes et toutes leurs participations, y compris celles en cours des autres joueurs, ainsi que ses propres participations en tant que Joueur. Un e-mail est envoyé à chaque joueur dont une participation en cours est supprimée. |
 | RM13 | L'Organisateur d'une chasse en brouillon peut la parcourir en mode essai (aperçu des étapes et consignes) avant publication. Le mode essai ne crée pas de participation et n'enregistre aucun résultat. |
 | RM14 | Une chasse peut être publiée en mode privé : elle n'apparaît pas dans la liste publique (M2) mais reste accessible par lien direct ou par code d'invitation. Le code d'invitation compte 6 caractères : des lettres majuscules et des chiffres. |
-| RM15 | L'Organisateur peut fixer, à la publication ou tant que la chasse n'est pas fermée, une date de fermeture optionnelle. Passé cette date, la chasse n'est plus proposée aux nouveaux joueurs, mais les participations déjà en cours peuvent être terminées normalement. La date est saisie et interprétée en heure de Paris. |
+| RM15 | L'Organisateur peut fixer, à la publication ou tant que la chasse n'est pas fermée, une date de fermeture optionnelle. Passé cette date, la chasse n'est plus proposée aux nouveaux joueurs, mais les participations déjà en cours peuvent être terminées normalement. Elle entre donc en fermeture, comme pour une suppression volontaire (RM11), sans e-mail aux joueurs en cours puisque la date était connue à l'avance. La date est saisie et interprétée en heure de Paris. |
 
 ### 3.3 Scénario de démonstration
 
@@ -232,8 +233,8 @@ Chaque module correspond à une étape du scénario et à un lot Must. Les crit�
 
 | ID | User story | Critères d'acceptation |
 | --- | --- | --- |
-| US-2.1 | En tant qu'utilisateur connecté, je consulte les chasses publiées | Affiche titre, description courte, nombre d'étapes, organisateur. Aucune chasse brouillon, aucune chasse privée (US-3.6), aucune chasse dont la date de fermeture (US-3.7) est dépassée, aucune chasse en fermeture (RM11). Liste paginée (20 par page). État vide explicite. |
-| US-2.2 | En tant qu'utilisateur connecté, j'ouvre le détail d'une chasse | Affiche description et nombre d'étapes, jamais le contenu des étapes ni les réponses. Bouton « Rejoindre », « Reprendre » ou « Voir mon résultat » selon l'état de ma participation (une chasse terminée ne se rejoue pas), et aucun bouton si j'en suis l'Organisateur. Pour une chasse en fermeture (RM11), un message explique qu'elle n'accepte plus de nouveaux joueurs, l'organisateur est affiché « compte supprimé » et seul un joueur dont la participation est en cours voit « Reprendre ». |
+| US-2.1 | En tant qu'utilisateur connecté, je consulte les chasses publiées | Affiche titre, description courte, nombre d'étapes, organisateur. Aucune chasse brouillon, aucune chasse privée (US-3.6), aucune chasse en fermeture ou fermée, qu'elle y soit entrée par suppression de son organisateur (RM11) ou par sa date de fermeture dépassée (RM15). Liste paginée (20 par page). État vide explicite. |
+| US-2.2 | En tant qu'utilisateur connecté, j'ouvre le détail d'une chasse | Affiche description et nombre d'étapes, jamais le contenu des étapes ni les réponses. Bouton « Rejoindre », « Reprendre » ou « Voir mon résultat » selon l'état de ma participation (une chasse terminée ne se rejoue pas), et aucun bouton si j'en suis l'Organisateur. Pour une chasse en fermeture par suppression de son organisateur (RM11), un message explique qu'elle n'accepte plus de nouveaux joueurs et l'organisateur est affiché « compte supprimé ». Pour une chasse en fermeture par date dépassée (RM15), le même message s'affiche, sans mention de compte supprimé puisque l'organisateur reste actif. Dans les deux cas, seul un joueur dont la participation est en cours voit « Reprendre ». |
 
 ### M3 - Création et publication d'une chasse (Organisateur)
 
@@ -245,7 +246,7 @@ Chaque module correspond à une étape du scénario et à un lot Must. Les crit�
 | US-3.4 | Je vois la liste de mes chasses | Seules les miennes, avec statut et nombre de participants. |
 | US-3.5 | Je teste ma chasse en mode essai avant de la publier | Disponible uniquement sur une chasse en brouillon dont je suis l'Organisateur (RM13). Parcours identique à celui d'un Joueur (consignes, saisie de réponse, RM9) mais aucune participation ni résultat n'est enregistré. |
 | US-3.6 | Je choisis de publier ma chasse en privé | Une chasse privée n'apparaît pas dans la liste publique (US-2.1) mais reste accessible par un lien direct ou un code d'invitation de 6 caractères (lettres majuscules et chiffres) que je peux partager (RM14). |
-| US-3.7 | Je fixe une date de fermeture optionnelle à ma chasse | Tant que la chasse n'est pas fermée, je peux fixer ou modifier cette date, en heure de Paris. Passée cette date, ma chasse n'est plus proposée aux nouveaux joueurs mais reste visible dans ma vue de suivi (M6) et les participations en cours peuvent être terminées (RM15). |
+| US-3.7 | Je fixe une date de fermeture optionnelle à ma chasse | Tant que la chasse n'est pas fermée, je peux fixer ou modifier cette date, en heure de Paris. Passée cette date, ma chasse entre en fermeture. Elle n'est donc plus proposée aux nouveaux joueurs mais reste visible dans ma vue de suivi (M6), les participations en cours peuvent être terminées, et la chasse se ferme complètement quand la dernière se termine (RM15). |
 
 Parcours conçu pour que la création d'une chasse de 3 étapes prenne moins de 5 minutes pour un utilisateur novice (cible à vérifier lors de l'essai avec un tiers).
 

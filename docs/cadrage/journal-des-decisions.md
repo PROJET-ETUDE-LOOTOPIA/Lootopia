@@ -25,6 +25,7 @@ Seules les décisions de cadrage (périmètre, parcours, règles métier) y figu
 - [Données et sécurité](#données-et-sécurité)
   - [D-008 : Distinction suppression volontaire et bannissement](#d-008--distinction-suppression-volontaire-et-bannissement)
   - [D-013 : Retrait du journal des actions sensibles](#d-013--retrait-du-journal-des-actions-sensibles)
+  - [D-014 : Fermeture d'une chasse par date, alignée sur RM11](#d-014--fermeture-dune-chasse-par-date-alignée-sur-rm11)
 - [Qualité, CI/CD et documentation](#qualité-cicd-et-documentation)
 
 ## Mode d'emploi
@@ -145,6 +146,7 @@ Chaque entrée suit le même plan : **Contexte** (le problème), **Options** con
 - **Raison** : Cohérence avec la règle retenue pour la suppression volontaire de compte (D-008) pour ne jamais couper une progression en cours.
 - **Conséquences** : ajout de RM15 et de la user story US-3.7. US-2.1 et US-4.1 précisent l'exclusion des chasses fermées de la liste et des nouvelles participations.
 - **Revoir si** : le besoin d'une fermeture stricte (option 3) apparaît.
+- **Précisée par** : D-014, qui aligne le mécanisme de fermeture par date sur celui de RM11 (statuts `closing`/`closed`) plutôt qu'un simple filtre de lecture.
 
 ### D-011 · Langue de l'interface, français seul pour le MVP
 
@@ -209,6 +211,17 @@ Aucune décision enregistrée pour l'instant.
 - **Raison** : le journal n'apporte pas une plus-value suffisante pour la démonstration du MVP par rapport à la complexité qu'il ajoute (table, énumérations, service dédié, anonymisation de l'acteur). Un logging applicatif classique suffit à couvrir le besoin de traçabilité en cas d'erreur.
 - **Conséquences** : suppression de la table `audit_logs` et des énumérations `audit_action`, `audit_resource_type`, `audit_result` du modèle de données et de `schema.sql`. Suppression de TR-1 et TR-3 du cahier des charges. TR-2 renumérotée TR-1. Retrait des mentions de journalisation dans US-3.3, US-7.1, US-7.3, RM12, la section 5.1 est remplacée par une mention de logging classique, la section 5.4 et la Definition of Done (7.6). Le périmètre MoSCoW (1.2) perd la ligne « Journalisation des actions sensibles ». Les entrées de signalement (`reports`) et les champs d'anonymisation des comptes (`users.status`) suffisent à tracer qui a signalé quoi et qui a été banni, sans table de journal dédiée.
 - **Revoir si** : un besoin d'audit métier avec preuve d'une action précise apparaît après le MVP.
+
+### D-014 · Fermeture d'une chasse par date, alignée sur RM11
+
+- **Contexte** : RM15 précisait seulement qu'une chasse dont la date de fermeture optionnelle (`closes_at`) est dépassée n'est plus proposée aux nouveaux joueurs. Dans le modèle le statut de la chasse restait `published` indéfiniment, y compris une fois toutes les participations en cours terminées. Or le statut `closing`/`closed` existe déjà pour un autre cas (suppression volontaire de l'organisateur, RM11), et une chasse fermée par sa date devrait, pour la même raison, cesser d'être listée et visible publiquement comme une chasse `published` ordinaire.
+- **Options** :
+  - 1 : Garder `closes_at` comme un simple filtre sans jamais changer le statut de la chasse
+  - 2 : Faire passer la chasse en `closing` puis `closed` au passage de `closes_at`, par le même mécanisme que RM11 (une tâche planifiée plutôt qu'un service synchrone, puisqu'il n'y a pas d'action utilisateur pour déclencher la vérification).
+- **Décision** : Option 2.
+- **Raison** : la chasse doit sortir de la liste publique et refuser les nouveaux joueurs de façon cohérente avec le reste et distinguer explicitement, via `hunt_end_reason`, une fermeture par date (`closing_date_reached`) d'une fermeture par suppression de l'organisateur (`owner_deleted`) ou d'un bannissement (qui ne passe jamais par `closed`, la chasse étant supprimée).
+- **Conséquences** : ajout de la valeur `closing_date_reached` à l'énumération `hunt_end_reason` et d'un index `hunts_closes_at_idx` dans `schema.sql`. RM15 et US-3.7 précisent que la chasse entre en fermeture comme pour RM11. Contrairement à RM11, aucun e-mail n'est envoyé aux joueurs en cours, la date étant fixée par l'organisateur et connue à l'avance.
+- **Revoir si** : la fréquence de la tâche planifiée pose un problème.
 
 ## Qualité, CI/CD et documentation
 

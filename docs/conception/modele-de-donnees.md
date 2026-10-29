@@ -6,11 +6,11 @@
 | **Version** | 0.2 (brouillon) |
 | **Date** | 29/10/2026 |
 | **Statut** | Proposition à valider par l'équipe, référent Données et sécurité |
-| **Documents liés** | [Synthèse des réponses du jalon 2](synthese-reponses-jalon-2.md), [Cahier des charges](../cadrage/cahier-des-charges.md), [schema.sql](schema.sql) |
+| **Documents liés** | [Synthèse des réponses du jalon 2](synthese-reponses-jalon-2.md), [Cahier des charges](../cadrage/cahier-des-charges.md), [schema.sql](../../deploiement/sql/schema.sql) |
 
 Ce document décrit le modèle de données proposé pour répondre au cahier des charges v1.4 et aux décisions du 29/10/2026.
 
-Déclaration d'usage de l'IA : Le squelette de ce modèle de données à été rédigé par l'IA en se basant sur le cahier des charges afin d'avoir une base puis il a été retravailler entièrement par l'équipe.
+Déclaration d'usage de l'IA : Le squelette de ce modèle de données à été rédigé par l'IA en se basant sur le cahier des charges afin d'avoir une base puis il a été retravaillé entièrement par l'équipe.
 
 ## 1. Principes globaux
 

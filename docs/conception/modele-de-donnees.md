@@ -8,7 +8,7 @@
 | **Statut** | Proposition à valider par l'équipe, référent Données et sécurité |
 | **Documents liés** | [Synthèse des réponses du jalon 2](synthese-reponses-jalon-2.md), [Cahier des charges](../cadrage/cahier-des-charges.md), [schema.sql](schema.sql) |
 
-Ce document décrit le modèle de données proposé pour répondre au cahier des charges v1.2 et aux décisions du 26/10/2026. Les neuf entités ont été acceptées « pour l'instant » par l'équipe. Le script [schema.sql](schema.sql) est la traduction en PostgreSQL.
+Ce document décrit le modèle de données proposé pour répondre au cahier des charges v1.4 et aux décisions du 29/10/2026.
 
 Déclaration d'usage de l'IA : Le squelette de ce modèle de données à été rédigé par l'IA en se basant sur le cahier des charges afin d'avoir une base puis il a été retravailler entièrement par l'équipe.
 

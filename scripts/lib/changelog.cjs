@@ -5,27 +5,36 @@
 
 // Une section de changelog par type de commit/PR.
 const TYPE_SECTIONS = {
-  feat: 'Added',
-  fix: 'Fixed',
-  docs: 'Documentation',
-  style: 'Style',
-  refactor: 'Changed',
-  perf: 'Performance',
-  test: 'Tests',
-  build: 'Build',
-  ci: 'CI',
-  chore: 'Chore',
-  revert: 'Reverted',
+  feat: "Added",
+  fix: "Fixed",
+  docs: "Documentation",
+  style: "Style",
+  refactor: "Changed",
+  perf: "Performance",
+  test: "Tests",
+  build: "Build",
+  ci: "CI",
+  chore: "Chore",
+  revert: "Reverted",
 };
 
 // Ordre d'affichage des sections dans une entree de changelog.
 const SECTION_ORDER = [
-  'Added', 'Fixed', 'Changed', 'Performance',
-  'Documentation', 'Style', 'Tests', 'Build', 'CI', 'Chore', 'Reverted',
+  "Added",
+  "Fixed",
+  "Changed",
+  "Performance",
+  "Documentation",
+  "Style",
+  "Tests",
+  "Build",
+  "CI",
+  "Chore",
+  "Reverted",
 ];
 
 function parseVersion(version) {
-  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version || '');
+  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version || "");
 
   if (!match) {
     return null;
@@ -45,7 +54,7 @@ function formatVersion({ major, minor, patch }) {
 // monter PATCH.
 function computeNextVersion(baselineVersion, types) {
   const base = parseVersion(baselineVersion) || { major: 0, minor: 0, patch: 0 };
-  const hasFeat = types.includes('feat');
+  const hasFeat = types.includes("feat");
 
   if (hasFeat) {
     return formatVersion({ major: base.major, minor: base.minor + 1, patch: 0 });
@@ -59,7 +68,7 @@ function sectionForType(type) {
 }
 
 function buildChangelogEntry(version, date, entriesBySection) {
-  const lines = [`# [${version} - ${date}]`, ''];
+  const lines = [`# [${version} - ${date}]`, ""];
 
   for (const section of SECTION_ORDER) {
     const entries = entriesBySection[section];
@@ -72,15 +81,15 @@ function buildChangelogEntry(version, date, entriesBySection) {
     for (const entry of entries) {
       lines.push(`- ${entry}`);
     }
-    lines.push('');
+    lines.push("");
   }
 
-  return `${lines.join('\n').trimEnd()}\n`;
+  return `${lines.join("\n").trimEnd()}\n`;
 }
 
 // Lit la version en tete d'un changelog existant (l'entree la plus recente).
 function extractLatestVersion(changelogContent) {
-  const match = /^# \[(\d+\.\d+\.\d+) - .+\]/m.exec(changelogContent || '');
+  const match = /^# \[(\d+\.\d+\.\d+) - .+\]/m.exec(changelogContent || "");
   return match ? match[1] : null;
 }
 

@@ -3,22 +3,22 @@
 // (voir CONTRIBUTING.md, section "Conventions de nommage des commits").
 // Affiche un message d'erreur clair.
 
-const fs = require('fs');
-const path = require('path');
-const { validateHeader } = require('./lib/validate-header.cjs');
+const fs = require("fs");
+const path = require("path");
+const { validateHeader } = require("./lib/validate-header.cjs");
 
 /**
  * Dossier git attendu, relatif a la racine du depot. Git lance toujours les hooks
  * depuis la racine du depot, donc ce chemin est resolu depuis le dossier courant.
  * Les worktrees et sous-modules, ou .git est un fichier, ne sont pas pris en charge.
  */
-const GIT_DIR = '.git';
+const GIT_DIR = ".git";
 
 /**
  * Fichiers de message que git transmet au hook commit-msg : COMMIT_EDITMSG pour
  * un commit classique, MERGE_MSG pour un commit de fusion.
  */
-const ALLOWED_MESSAGE_FILES = ['COMMIT_EDITMSG', 'MERGE_MSG'];
+const ALLOWED_MESSAGE_FILES = ["COMMIT_EDITMSG", "MERGE_MSG"];
 
 /**
  * Arrete le script avec un message d'erreur lorsque le fichier recu est refuse.
@@ -26,9 +26,9 @@ const ALLOWED_MESSAGE_FILES = ['COMMIT_EDITMSG', 'MERGE_MSG'];
  * @returns {never} Ne retourne pas, le processus se termine avec le code 1.
  */
 function rejectPath(reason) {
-  console.error('');
+  console.error("");
   console.error(`Verification du commit impossible : ${reason}`);
-  console.error('');
+  console.error("");
   process.exit(1);
 }
 
@@ -76,14 +76,16 @@ const raw = fs.readFileSync(filePath, 'utf8');
 const header = raw.split('\n')[0].replace(/\r$/, '');
 
 function fail(problem, example) {
-  console.error('');
-  console.error('Commit refuse : le message ne respecte pas les conventions du projet (voir CONTRIBUTING.md).');
+  console.error("");
+  console.error(
+    "Commit refuse : le message ne respecte pas les conventions du projet (voir CONTRIBUTING.md).",
+  );
   console.error(`Message recu  : "${header}"`);
   console.error(`Probleme      : ${problem}`);
   if (example) {
     console.error(`Exemple valide: "${example}"`);
   }
-  console.error('');
+  console.error("");
   process.exit(1);
 }
 

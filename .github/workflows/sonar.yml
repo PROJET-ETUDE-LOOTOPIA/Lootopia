@@ -29,3 +29,5 @@ jobs:
           args: >
             -Dsonar.organization=projet-etude-lootopia
             -Dsonar.projectKey=PROJET-ETUDE-LOOTOPIA_Lootopia
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.coverage.exclusions=scripts/**

@@ -103,7 +103,7 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
 </style></head>
 <body>
 <div class="stage" id="stage">
-  <div class="top"><div class="label" id="label">Étape 2 terminée</div></div>
+  <div class="top"><div class="label" id="label">Île aux questions terminée</div></div>
   <div class="art" id="art">
     <div class="glow"></div>
     <svg viewBox="0 0 256 256" aria-label="Étape validée">
@@ -122,10 +122,10 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
   </div>
   <div class="content">
     <div class="pts"><div class="n" id="pts">+0</div><div class="u">points gagnés</div></div>
-    <div class="time"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F7CE7E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg><div><b id="time">03:42</b><span>Temps de l’étape</span></div></div>
+    <div class="time"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F7CE7E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg><div><b id="time">03:42</b><span>Temps</span></div></div>
     <div><div class="trail" id="trail"></div></div>
     <div class="cta">
-      <button class="btn" id="next" type="button">Étape suivante
+      <button class="btn" id="next" type="button">Île suivante
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14231F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       <button class="btn2" id="menu" type="button">Revenir au menu</button>
     </div>
@@ -138,7 +138,10 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
   var etape=Math.max(1,parseInt(q.get('etape')||'2',10)), total=Math.max(etape,parseInt(q.get('total')||'5',10));
   var POINTS=parseInt(q.get('points')||'120',10), TEMPS=q.get('temps')||'03:42';
   var last=etape>=total;
-  document.getElementById('label').textContent=q.get('label')||('Étape '+etape+' terminée');
+  // Titre : ?label= remplace tout le texte, ?titre= reçoit le nom de l'étape (steps.title en base).
+  // Sans paramètre, le texte écrit dans l'HTML est conservé.
+  if(q.get('label')) document.getElementById('label').textContent=q.get('label');
+  else if(q.get('titre')) document.getElementById('label').textContent=q.get('titre')+' terminée';
   document.getElementById('time').textContent=TEMPS;
   if(last){ document.getElementById('next').firstChild.textContent='Terminer la chasse'; }
   var fmt=function(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')};

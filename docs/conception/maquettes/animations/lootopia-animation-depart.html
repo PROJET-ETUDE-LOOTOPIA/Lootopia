@@ -36,20 +36,20 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
 .back:hover{background:rgba(255,255,255,.14)}.back:active{transform:scale(.97)}
 .label{font:800 clamp(26px,3.6vh,30px)/1.1 Bricolage;letter-spacing:-.01em;color:#fff;text-align:center;opacity:0}
 .label:after{content:'';display:block;width:44px;height:4px;border-radius:2px;background:#F0A82E;margin:10px auto 0}
-.name{margin-top:8px;font:800 clamp(28px,4.2vh,34px)/1.1 Bricolage;letter-spacing:-.01em;opacity:0}
-.msg{margin-top:14px;font:400 clamp(15px,2.2vh,16px)/1.5 DM;color:#CFE5E1;opacity:0}
+.msg{margin-top:8px;font:400 clamp(15px,2.2vh,16px)/1.5 DM;color:#CFE5E1;opacity:0;max-height:24vh;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain}
+.msg::-webkit-scrollbar{display:none}
+.msg.scroll{-webkit-mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent)}
+.msg.scroll .msg-in{padding:1.2em 0}
 .cta{margin-top:clamp(18px,4vh,32px);opacity:0}
 .btn{height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:10px;font:700 16px DM;background:#F0A82E;color:#14231F;cursor:pointer;border:0;width:100%;transition:transform .15s,background .15s}
 .btn:hover{background:#F7B94A}.btn:active{transform:scale(.97)}
 .btn svg{display:block}
 .play .label{animation:fade .7s .25s both}
 .play .back{animation:fade .6s .25s both}
-.play .name{animation:pop .7s 2.25s cubic-bezier(.3,1.4,.5,1) both}
-.play .msg{animation:fade .7s 2.8s both}
-.play .cta{animation:fade .6s 3.5s both}
-.play .btn{animation:pulse 2.4s 4.3s ease-in-out infinite}
+.play .msg{animation:fade .7s 2.25s both}
+.play .cta{animation:fade .6s 2.95s both}
+.play .btn{animation:pulse 2.4s 3.75s ease-in-out infinite}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@keyframes pop{0%{opacity:0;transform:translateY(16px) scale(.92)}100%{opacity:1;transform:none}}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(240,168,46,.55)}60%{box-shadow:0 0 0 14px rgba(240,168,46,0)}}
 /* ordinateur / tablette paysage : deux colonnes */
 @media (min-aspect-ratio:1/1) and (min-width:760px){
@@ -59,8 +59,7 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
   .top{padding:28px 32px 0}
   .art{width:min(40vw,78vh,620px);margin-left:0}
   .content{width:auto;max-width:480px;text-align:left}
-  .name{font-size:clamp(36px,5.4vh,54px)}
-  .msg{font-size:clamp(16px,2.4vh,19px)}
+  .msg{font-size:clamp(16px,2.4vh,19px);max-height:44vh}
   .btn{width:auto;min-width:300px;padding:0 28px;height:58px;justify-content:center}
 }
 /* petits écrans en paysage (téléphone couché) */
@@ -71,9 +70,9 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
   .label{font-size:22px}.label:after{display:none}
   .art{width:min(40vw,80vh)}
   .content{width:auto;max-width:360px;text-align:left}
-  .name{font-size:24px}.msg{font-size:14px;margin-top:8px}.cta{margin-top:14px}.btn{height:46px;font-size:15px}
+  .msg{font-size:14px;margin-top:0;max-height:42vh}.cta{margin-top:14px}.btn{height:46px;font-size:15px}
 }
-.static .ring,.static #fdrop,.static #pen,.static #ground,.static .label,.static .back,.static .name,.static .msg,.static .cta{animation:none!important;opacity:1;transform:none;stroke-dashoffset:0}
+.static .ring,.static #fdrop,.static #pen,.static #ground,.static .label,.static .back,.static .msg,.static .cta{animation:none!important;opacity:1;transform:none;stroke-dashoffset:0}
 .static #pen{transform:none}
 .static #ripple,.static .glow{display:none}
 </style></head>
@@ -98,9 +97,8 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
     <div class="fx" id="fx"></div>
   </div>
   <div class="content">
-    <div class="name" id="name">Le Carnet du capitaine</div>
-    <div class="msg" id="msg">Bienvenue, agent. Le capitaine a disparu en laissant un carnet et une série d’indices. Ouvre l’œil : la première étape t’attend.</div>
-    <div class="cta"><button class="btn" id="go" type="button">Commencer l’étape 1
+    <div class="msg" id="msg"><div class="msg-in" id="msgIn">Vous avez été missionnés pour retrouver un trésor. Il repose sur une île lointaine, au fin fond d’un archipel, protégée par des gardiens. Pour l’atteindre, vous devrez progresser d’île en île et affronter chaque gardien dans son épreuve favorite. Une fois toutes les épreuves remportées, le trésor sera à vous. Mais attention : d’autres aventuriers pourraient bien l’atteindre avant vous.</div></div>
+    <div class="cta"><button class="btn" id="go" type="button">Première île
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14231F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
   </div>
 </div>
@@ -108,8 +106,8 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
 (function(){
   var stage=document.getElementById('stage'), art=document.getElementById('art'), fx=document.getElementById('fx');
   var q=new URLSearchParams(location.search);
-  if(q.get('nom')) document.getElementById('name').textContent=q.get('nom');
-  if(q.get('message')) document.getElementById('msg').textContent=q.get('message');
+  var msg=document.getElementById('msg');
+  if(q.get('message')) document.getElementById('msgIn').textContent=q.get('message');
   if(q.get('label')) document.getElementById('label').textContent=q.get('label');
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   function rnd(a,b){return a+Math.random()*(b-a)}
@@ -123,8 +121,32 @@ body{margin:0;background:#0A3835;font-family:DM,sans-serif;color:#fff;overflow:h
     }
     setTimeout(function(){fx.innerHTML=''},1600);
   }
+  /**
+   * Marque le texte comme défilant s'il dépasse sa zone, puis le fait défiler
+   * lentement jusqu'en bas. Le défilement automatique s'arrête dès que le
+   * joueur fait défiler lui-même le texte, et il est désactivé si les
+   * animations réduites sont demandées.
+   * @param {number} delay Délai en millisecondes avant le début du défilement.
+   */
+  function autoScroll(delay){
+    var fits=msg.scrollHeight<=msg.clientHeight+2;
+    msg.classList.toggle('scroll',!fits);
+    if(fits||reduce) return;
+    var stopped=false, last=0, pos=0, speed=18;
+    function stop(){stopped=true}
+    ['wheel','touchstart','pointerdown','keydown'].forEach(function(e){msg.addEventListener(e,stop,{passive:true})});
+    function step(t){
+      if(stopped) return;
+      if(last){ pos+=(t-last)/1000*speed; msg.scrollTop=pos; }
+      last=t;
+      if(msg.scrollTop+msg.clientHeight<msg.scrollHeight-1) requestAnimationFrame(step);
+    }
+    setTimeout(function(){requestAnimationFrame(step)},delay);
+  }
   if(reduce){ stage.classList.add('static'); }
   else { stage.classList.add('play'); setTimeout(dust,1400); }
+  autoScroll(4200);
+  window.addEventListener('resize',function(){msg.classList.toggle('scroll',msg.scrollHeight>msg.clientHeight+2)});
   document.getElementById('back').addEventListener('click',function(){
     window.dispatchEvent(new CustomEvent('lootopia:back-to-hunts'));
     if(window.parent!==window){ window.parent.postMessage({type:'lootopia:back-to-hunts'},'*'); }

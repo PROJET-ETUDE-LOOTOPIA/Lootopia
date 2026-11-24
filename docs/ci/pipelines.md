@@ -7,6 +7,7 @@
   - [Rendre la vérification obligatoire](#rendre-la-vérification-obligatoire)
   - [Bloquer les push directs](#bloquer-les-push-directs)
   - [Tests manuels à effectuer](#tests-manuels-à-effectuer)
+- [Tests](#tests)
 - [Changelog et tag de version](#changelog-et-tag-de-version)
   - [Prérequis GitHub](#prérequis-github)
   - [Pousser sur `develop` protégée](#pousser-sur-develop-protégée)
@@ -54,6 +55,10 @@ Une fois activée, le seul moyen de faire arriver du code sur `main`/`develop` e
 2. Modifier le titre pour qu'il soit conforme (ex. `feat(auth): ajoute la connexion via email`) → le check doit repasser au vert.
 3. Une fois le ruleset actif, vérifier que le bouton de merge reste désactivé tant que le check `verify-pr-title` n'est pas au vert.
 4. Essayer un `git push` direct sur `main` depuis une modification locale → doit être rejeté par GitHub une fois **Require a pull request before merging** activé.
+
+## Tests
+
+Le workflow [.github/workflows/tests.yml](../../.github/workflows/tests.yml) exécute les tests Jest du backend et du frontend sur chaque pull request et sur chaque push vers `develop` et `main`. Le job `run-tests` échoue si l'une des deux suites échoue. Pour qu'il bloque le merge, l'ajouter aux status checks obligatoires du ruleset, comme décrit dans [Rendre la vérification obligatoire](#rendre-la-vérification-obligatoire). Le détail de l'organisation des tests est dans [Structure des tests](../tests/structure-des-tests.md).
 
 ## Changelog et tag de version
 

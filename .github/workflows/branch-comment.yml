@@ -2,7 +2,7 @@ name: branch-comment
 
 on:
   pull_request:
-    types: [openend, reopened]
+    types: [opened, reopened]
     branches: [chore/**]
   
 permissions:

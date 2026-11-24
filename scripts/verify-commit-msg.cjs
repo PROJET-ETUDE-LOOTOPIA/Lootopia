@@ -3,22 +3,24 @@
 // (voir CONTRIBUTING.md, section "Conventions de nommage des commits").
 // Affiche un message d'erreur clair.
 
-const fs = require('fs');
-const { validateHeader } = require('./lib/validate-header.cjs');
+const fs = require("fs");
+const { validateHeader } = require("./lib/validate-header.cjs");
 
 const filePath = process.argv[2];
-const raw = fs.readFileSync(filePath, 'utf8');
-const header = raw.split('\n')[0].replace(/\r$/, '');
+const raw = fs.readFileSync(filePath, "utf8");
+const header = raw.split("\n")[0].replace(/\r$/, "");
 
 function fail(problem, example) {
-  console.error('');
-  console.error('Commit refuse : le message ne respecte pas les conventions du projet (voir CONTRIBUTING.md).');
+  console.error("");
+  console.error(
+    "Commit refuse : le message ne respecte pas les conventions du projet (voir CONTRIBUTING.md).",
+  );
   console.error(`Message recu  : "${header}"`);
   console.error(`Probleme      : ${problem}`);
   if (example) {
     console.error(`Exemple valide: "${example}"`);
   }
-  console.error('');
+  console.error("");
   process.exit(1);
 }
 

@@ -3,37 +3,39 @@
 // (voir CONTRIBUTING.md, section "Conventions de nommage des branches")
 // avant de la pousser vers le remote.
 
-const readline = require('readline');
+const readline = require("readline");
 
-const TYPES = ['feature', 'fix', 'hotfix', 'refactor', 'docs', 'test', 'chore', 'ci'];
-const PROTECTED_BRANCHES = ['main', 'master', 'develop'];
-const BRANCH_REGEX = new RegExp(`^(${TYPES.join('|')})/[a-z0-9]+(-[a-z0-9]+)*$`);
+const TYPES = ["feature", "fix", "hotfix", "refactor", "docs", "test", "chore", "ci"];
+const PROTECTED_BRANCHES = ["main", "master", "develop"];
+const BRANCH_REGEX = new RegExp(`^(${TYPES.join("|")})/[a-z0-9]+(-[a-z0-9]+)*$`);
 const ZERO_SHA = /^0+$/;
 
 function fail(branch, problem, example) {
-  console.error('');
-  console.error('Push refuse : le nom de la branche ne respecte pas la convention du projet (voir CONTRIBUTING.md).');
+  console.error("");
+  console.error(
+    "Push refuse : le nom de la branche ne respecte pas la convention du projet (voir CONTRIBUTING.md).",
+  );
   console.error(`Branche       : "${branch}"`);
   console.error(`Probleme      : ${problem}`);
   if (example) {
     console.error(`Exemple valide: "${example}"`);
   }
-  console.error('');
+  console.error("");
   process.exit(1);
 }
 
 const rl = readline.createInterface({ input: process.stdin, terminal: false });
 const lines = [];
 
-rl.on('line', (line) => {
+rl.on("line", (line) => {
   if (line.trim()) lines.push(line);
 });
 
-rl.on('close', () => {
+rl.on("close", () => {
   for (const line of lines) {
-    const [localRef, localSha] = line.split(' ');
+    const [localRef, localSha] = line.split(" ");
 
-    if (!localRef || !localRef.startsWith('refs/heads/')) {
+    if (!localRef || !localRef.startsWith("refs/heads/")) {
       continue;
     }
 
@@ -42,7 +44,7 @@ rl.on('close', () => {
       continue;
     }
 
-    const branch = localRef.replace('refs/heads/', '');
+    const branch = localRef.replace("refs/heads/", "");
 
     if (PROTECTED_BRANCHES.includes(branch)) {
       continue;
@@ -51,8 +53,8 @@ rl.on('close', () => {
     if (!BRANCH_REGEX.test(branch)) {
       fail(
         branch,
-        `le nom ne suit pas le format "<type>/<description-courte>". Types autorises : ${TYPES.join(', ')}.`,
-        'feature/authentification-utilisateur',
+        `le nom ne suit pas le format "<type>/<description-courte>". Types autorises : ${TYPES.join(", ")}.`,
+        "feature/authentification-utilisateur",
       );
     }
   }

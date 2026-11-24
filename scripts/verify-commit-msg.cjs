@@ -72,8 +72,8 @@ function resolveCommitMessagePath(input) {
 }
 
 const filePath = resolveCommitMessagePath(process.argv[2]);
-const raw = fs.readFileSync(filePath, 'utf8');
-const header = raw.split('\n')[0].replace(/\r$/, '');
+const raw = fs.readFileSync(filePath, "utf8");
+const header = raw.split("\n")[0].replace(/\r$/, "");
 
 function fail(problem, example) {
   console.error("");

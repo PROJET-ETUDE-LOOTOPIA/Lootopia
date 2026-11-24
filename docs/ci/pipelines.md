@@ -160,3 +160,28 @@ Puis :
 2. Committer `CHANGELOG.md` sur `develop`, merger dans `main`, puis lancer `node scripts/extract-latest-version.cjs` sur `main` → doit afficher la version attendue (`0.1.0`).
 3. Créer le tag (`git tag -a v0.1.0 -m "Release v0.1.0"` puis `git push origin v0.1.0`) et vérifier qu'il apparaît bien sur GitHub.
 4. Merger une nouvelle PR (ex. `fix: ...`) dans `develop` après ce tag, relancer le générateur → doit produire une nouvelle entrée `0.1.1` au-dessus de l'ancienne, sans toucher à l'entrée `0.1.0` déjà taguée.
+
+## Sonar
+
+Le job `sonar.yml` lance l'analyse sonarqube lors d'une PR qui vise les branches `develop` ou `main`.
+
+Pour configurer sonarqube dans le projet, il faut suivre les étapes suivantes : 
+- Créer le compte et l'organisation
+  - Inscrivez-vous sur sonarcloud.io avec votre compte GitHub
+  - Créez une organisation ou en choisir une. 
+  - Dans « Choose a plan », sélectionnez Free plan.
+  - Importez votre dépôt
+
+- Désactivez l'analyse automatique : 
+  - Allez ici : https://sonarcloud.io/project/analysis_method?id=PROJET-ETUDE-LOOTOPIA_Lootopia
+  - Désactivez le bouton `Automatic analysis`
+
+- Créer la variable d'environnement dans github
+  - Allez ici : https://sonarcloud.io/project/configuration/GitHubActions?id=PROJET-ETUDE-LOOTOPIA_Lootopia
+  - Copier le nom et la value
+  - Allez dans les settings de votre projet github, dans `secret and variables` puis `actions`
+  - Créer un `new secret` et renseignez les valeurs précédemment copiées
+
+- Récupérer le fichier `.yml`
+  - Toujours dans : https://sonarcloud.io/project/configuration/GitHubActions?id=PROJET-ETUDE-LOOTOPIA_Lootopia
+  - Allez dans la partie `Create or update a build file`, sélectionnez `JS/TS & Web` puis `Windows` et enfin copiez le `.yml` généré.

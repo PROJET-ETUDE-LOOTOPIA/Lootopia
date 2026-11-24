@@ -22,13 +22,13 @@ jobs:
             frontend/package-lock.json
 
       - name: Installe les dependances racine
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Installe les dependances backend
-        run: npm ci --prefix backend
+        run: npm ci --prefix backend --ignore-scripts
 
       - name: Installe les dependances frontend
-        run: npm ci --prefix frontend
+        run: npm ci --prefix frontend --ignore-scripts
 
       - name: Execute les tests backend
         run: npm test --prefix backend

@@ -5,8 +5,20 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execFileSync } = require('child_process');
 const { validateHeader } = require('./lib/validate-header.cjs');
+
+/**
+ * Dossier git attendu, relatif a la racine du depot. Git lance toujours les hooks
+ * depuis la racine du depot, donc ce chemin est resolu depuis le dossier courant.
+ * Les worktrees et sous-modules, ou .git est un fichier, ne sont pas pris en charge.
+ */
+const GIT_DIR = '.git';
+
+/**
+ * Fichiers de message que git transmet au hook commit-msg : COMMIT_EDITMSG pour
+ * un commit classique, MERGE_MSG pour un commit de fusion.
+ */
+const ALLOWED_MESSAGE_FILES = ['COMMIT_EDITMSG', 'MERGE_MSG'];
 
 /**
  * Arrete le script avec un message d'erreur lorsque le fichier recu est refuse.
@@ -21,14 +33,6 @@ function rejectPath(reason) {
 }
 
 /**
- * Renvoie le chemin absolu du dossier git du depot courant.
- * @returns {string} Chemin absolu du dossier git (par exemple .git, ou le dossier d'un worktree).
- */
-function gitDirectory() {
-  return execFileSync('git', ['rev-parse', '--absolute-git-dir'], { encoding: 'utf8' }).trim();
-}
-
-/**
  * Normalise un chemin pour la comparaison : absolu, et en minuscules sous Windows
  * ou le systeme de fichiers ignore la casse (c:\ et C:\ designent le meme dossier).
  * @param {string} p Chemin a normaliser.
@@ -40,25 +44,31 @@ function comparablePath(p) {
 }
 
 /**
- * Verifie que le chemin recu designe un fichier situe dans le dossier git du depot,
- * comme le fichier COMMIT_EDITMSG transmis par git au hook commit-msg.
- * Empeche de lire un fichier arbitraire via l'argument de la ligne de commande.
- * @param {string | undefined} input Chemin transmis en argument.
- * @returns {string} Chemin absolu et normalise du fichier de message.
+ * Determine le fichier de message a lire. Le chemin recu en argument sert
+ * uniquement a choisir parmi les fichiers autorises du dossier .git : le chemin
+ * renvoye est construit par le script, jamais repris de l'argument. Empeche ainsi
+ * de lire un fichier arbitraire via la ligne de commande.
+ * @param {string | undefined} input Chemin transmis en argument par git.
+ * @returns {string} Chemin absolu du fichier de message.
  */
 function resolveCommitMessagePath(input) {
   if (!input) {
     rejectPath('aucun fichier de message fourni.');
   }
-  const gitDir = comparablePath(gitDirectory());
-  const resolved = path.resolve(input);
-  if (!comparablePath(resolved).startsWith(gitDir + path.sep)) {
-    rejectPath('le fichier de message doit se trouver dans le dossier git du depot.');
+  if (!fs.statSync(GIT_DIR, { throwIfNoEntry: false })?.isDirectory()) {
+    rejectPath('le hook doit etre lance a la racine du depot, ou .git est un dossier (worktrees et sous-modules non pris en charge).');
   }
-  if (!fs.statSync(resolved, { throwIfNoEntry: false })?.isFile()) {
+  const requested = comparablePath(input);
+  const match = ALLOWED_MESSAGE_FILES.map((name) => path.resolve(GIT_DIR, name)).find(
+    (candidate) => comparablePath(candidate) === requested,
+  );
+  if (!match) {
+    rejectPath(`le fichier de message doit etre l'un de ${ALLOWED_MESSAGE_FILES.join(', ')} dans le dossier .git du depot.`);
+  }
+  if (!fs.statSync(match, { throwIfNoEntry: false })?.isFile()) {
     rejectPath('le fichier de message est introuvable.');
   }
-  return resolved;
+  return match;
 }
 
 const filePath = resolveCommitMessagePath(process.argv[2]);

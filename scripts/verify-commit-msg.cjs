@@ -40,7 +40,7 @@ function rejectPath(reason) {
  */
 function comparablePath(p) {
   const resolved = path.resolve(p);
-  return process.platform === 'win32' ? resolved.toLowerCase() : resolved;
+  return process.platform === "win32" ? resolved.toLowerCase() : resolved;
 }
 
 /**
@@ -53,20 +53,24 @@ function comparablePath(p) {
  */
 function resolveCommitMessagePath(input) {
   if (!input) {
-    rejectPath('aucun fichier de message fourni.');
+    rejectPath("aucun fichier de message fourni.");
   }
   if (!fs.statSync(GIT_DIR, { throwIfNoEntry: false })?.isDirectory()) {
-    rejectPath('le hook doit etre lance a la racine du depot, ou .git est un dossier (worktrees et sous-modules non pris en charge).');
+    rejectPath(
+      "le hook doit etre lance a la racine du depot, ou .git est un dossier (worktrees et sous-modules non pris en charge).",
+    );
   }
   const requested = comparablePath(input);
   const match = ALLOWED_MESSAGE_FILES.map((name) => path.resolve(GIT_DIR, name)).find(
     (candidate) => comparablePath(candidate) === requested,
   );
   if (!match) {
-    rejectPath(`le fichier de message doit etre l'un de ${ALLOWED_MESSAGE_FILES.join(', ')} dans le dossier .git du depot.`);
+    rejectPath(
+      `le fichier de message doit etre l'un de ${ALLOWED_MESSAGE_FILES.join(", ")} dans le dossier .git du depot.`,
+    );
   }
   if (!fs.statSync(match, { throwIfNoEntry: false })?.isFile()) {
-    rejectPath('le fichier de message est introuvable.');
+    rejectPath("le fichier de message est introuvable.");
   }
   return match;
 }

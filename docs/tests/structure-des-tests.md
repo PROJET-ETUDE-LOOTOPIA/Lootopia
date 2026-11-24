@@ -91,7 +91,10 @@ Depuis la racine du dépôt, après avoir installé les dépendances des trois `
 npm test                      # backend puis frontend
 npm test --prefix backend     # backend uniquement
 npm test --prefix frontend    # frontend uniquement
+npm run test:coverage         # backend puis frontend, avec rapports de couverture
 ```
+
+`test:coverage` génère `backend/coverage/lcov.info` et `frontend/coverage/lcov.info`, qui sont lus par l'analyse Sonar (voir [Pipelines CI](../ci/pipelines.md#couverture-de-tests)).
 
 Pour cibler un seul fichier ou un seul test, passer les arguments à Jest :
 

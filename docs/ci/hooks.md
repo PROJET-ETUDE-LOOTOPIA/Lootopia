@@ -15,6 +15,7 @@
 - [Branches](#branches)
   - [Fonctionnement du script](#fonctionnement-du-script-1)
   - [Tests manuels à effectuer](#tests-manuels-à-effectuer-1)
+- [Lint et formatage avant commit](#lint-et-formatage-avant-commit)
 
 ## Commits
 
@@ -146,4 +147,28 @@ git checkout main
 git branch -D nimportequoi feature/test-branche-valide
 git remote remove test-origin
 rm -rf /tmp/fake-remote.git
+```
+
+## Lint et formatage avant commit
+
+Le hook `pre-commit` ([.husky/pre-commit](../../.husky/pre-commit)) lance `lint-staged`, configuré dans le `package.json` de la racine. Seuls les fichiers indexés sont traités :
+
+| Fichiers | Actions |
+|---|---|
+| `*.ts`, `*.tsx`, `*.js`, `*.cjs`, `*.mjs` | `eslint --fix` puis `prettier --write` |
+| `*.json` | `prettier --write` |
+
+Les corrections automatiques sont réintégrées au commit. Si ESLint trouve une erreur qu'il ne sait pas corriger, le commit est refusé. Les règles sont décrites dans [Lint et formatage](pipelines.md#lint-et-formatage).
+
+### Tests manuels à effectuer
+
+```bash
+# Fichier mal formaté et avec une variable inutilisée → le commit doit être refusé
+echo 'const   inutilisee = 1' > scripts/tmp-lint.cjs
+git add scripts/tmp-lint.cjs
+git commit -m "chore: test du hook pre-commit"
+
+# Nettoyage
+git restore --staged scripts/tmp-lint.cjs
+rm scripts/tmp-lint.cjs
 ```

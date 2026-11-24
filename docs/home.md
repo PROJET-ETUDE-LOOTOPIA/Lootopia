@@ -16,3 +16,7 @@ Sommaire de la documentation du projet.
 
 - [Git hooks](ci/hooks.md)
 - [Pipelines](ci/pipelines.md)
+
+## Tests
+
+- [Structure des tests](tests/structure-des-tests.md)

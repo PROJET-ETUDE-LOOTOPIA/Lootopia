@@ -13,12 +13,12 @@ jobs:
     if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'develop'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: main
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
 
@@ -47,13 +47,22 @@ jobs:
         run: |
           npm run build --prefix backend
           npm run build --prefix frontend
-          
+
+      - name: Empaquette les builds
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          mkdir -p release
+          tar -czf "release/lootopia-backend-v$VERSION.tar.gz" -C backend dist
+          tar -czf "release/lootopia-frontend-v$VERSION.tar.gz" -C frontend dist
+
       - name: créer la GitHub release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           tag: v${{ steps.version.outputs.version }}
           name: Release v${{ steps.version.outputs.version }}
+          artifacts: "release/*.tar.gz"
+          allowUpdates: true
           body: |
-            regardé le [CHANGELOG](./CHANGELOG.md) pour les détails.
+            Voir le [CHANGELOG](https://github.com/${{ github.repository }}/blob/v${{ steps.version.outputs.version }}/CHANGELOG.md) pour les détails.
 
       

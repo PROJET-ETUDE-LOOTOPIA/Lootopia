@@ -7,6 +7,7 @@
   - [Rendre la vérification obligatoire](#rendre-la-vérification-obligatoire)
   - [Bloquer les push directs](#bloquer-les-push-directs)
   - [Tests manuels à effectuer](#tests-manuels-à-effectuer)
+- [Tests](#tests)
 - [Changelog et tag de version](#changelog-et-tag-de-version)
   - [Prérequis GitHub](#prérequis-github)
   - [Pousser sur `develop` protégée](#pousser-sur-develop-protégée)
@@ -54,6 +55,10 @@ Une fois activée, le seul moyen de faire arriver du code sur `main`/`develop` e
 2. Modifier le titre pour qu'il soit conforme (ex. `feat(auth): ajoute la connexion via email`) → le check doit repasser au vert.
 3. Une fois le ruleset actif, vérifier que le bouton de merge reste désactivé tant que le check `verify-pr-title` n'est pas au vert.
 4. Essayer un `git push` direct sur `main` depuis une modification locale → doit être rejeté par GitHub une fois **Require a pull request before merging** activé.
+
+## Tests
+
+Le workflow [.github/workflows/tests.yml](../../.github/workflows/tests.yml) exécute les tests Jest du backend et du frontend sur chaque pull request et sur chaque push vers `develop` et `main`. Le job `run-tests` échoue si l'une des deux suites échoue. Pour qu'il bloque le merge, l'ajouter aux status checks obligatoires du ruleset, comme décrit dans [Rendre la vérification obligatoire](#rendre-la-vérification-obligatoire). Le détail de l'organisation des tests est dans [Structure des tests](../tests/structure-des-tests.md).
 
 ## Changelog et tag de version
 
@@ -155,3 +160,28 @@ Puis :
 2. Committer `CHANGELOG.md` sur `develop`, merger dans `main`, puis lancer `node scripts/extract-latest-version.cjs` sur `main` → doit afficher la version attendue (`0.1.0`).
 3. Créer le tag (`git tag -a v0.1.0 -m "Release v0.1.0"` puis `git push origin v0.1.0`) et vérifier qu'il apparaît bien sur GitHub.
 4. Merger une nouvelle PR (ex. `fix: ...`) dans `develop` après ce tag, relancer le générateur → doit produire une nouvelle entrée `0.1.1` au-dessus de l'ancienne, sans toucher à l'entrée `0.1.0` déjà taguée.
+
+## Sonar
+
+Le job `sonar.yml` lance l'analyse sonarqube lors d'une PR qui vise les branches `develop` ou `main`.
+
+Pour configurer sonarqube dans le projet, il faut suivre les étapes suivantes : 
+- Créer le compte et l'organisation
+  - Inscrivez-vous sur sonarcloud.io avec votre compte GitHub
+  - Créez une organisation ou en choisir une. 
+  - Dans « Choose a plan », sélectionnez Free plan.
+  - Importez votre dépôt
+
+- Désactivez l'analyse automatique : 
+  - Allez ici : https://sonarcloud.io/project/analysis_method?id=PROJET-ETUDE-LOOTOPIA_Lootopia
+  - Désactivez le bouton `Automatic analysis`
+
+- Créer la variable d'environnement dans github
+  - Allez ici : https://sonarcloud.io/project/configuration/GitHubActions?id=PROJET-ETUDE-LOOTOPIA_Lootopia
+  - Copier le nom et la value
+  - Allez dans les settings de votre projet github, dans `secret and variables` puis `actions`
+  - Créer un `new secret` et renseignez les valeurs précédemment copiées
+
+- Récupérer le fichier `.yml`
+  - Toujours dans : https://sonarcloud.io/project/configuration/GitHubActions?id=PROJET-ETUDE-LOOTOPIA_Lootopia
+  - Allez dans la partie `Create or update a build file`, sélectionnez `JS/TS & Web` puis `Windows` et enfin copiez le `.yml` généré.

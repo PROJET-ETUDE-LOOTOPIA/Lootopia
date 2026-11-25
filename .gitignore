@@ -1,1 +1,11 @@
 node_modules/
+.idea/
+dist/
+coverage/
+.vscode/
+
+# Fichiers de réglages propres à chaque machine (mots de passe, adresses...) : jamais sur git.
+# Seul le modèle .env.example est partagé.
+.env
+.env.*
+!.env.example

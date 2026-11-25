@@ -5,12 +5,12 @@
 | | |
 | --- | --- |
 | **Document** | Cahier des charges, Lootopia (MVP) |
-| **Version** | 1.0 |
+| **Version** | 1.1 |
 | **Date** | 26/10/2026 |
 | **Statut** | Validé par l'équipe |
 | **Rédacteurs** | Mathéo Souchet, Elias Forget, Alexis Ballenghien, Alexis Cantin, Arthur Millet |
 | **Document de référence** | Note de cadrage v1.0 du 28/09/2026 |
-| **Documents liés** | [Journal des décisions](journal-des-decisions.md), [Politique d'usage de l'IA](politique-IA.md) |
+| **Documents liés** | [Journal des décisions](journal-des-decisions.md), [Politique d'usage de l'IA](politique-IA.md), [Rétroplanning](retroplanning.md), [Analyse des risques et plans B](analyse-des-risques.md), [RACI](raci.md) |
 
 ### Historique des versions
 
@@ -19,6 +19,7 @@
 | 0.1 | 05/10/2026 | Équipe | Création du cahier des charges à partir de la note de cadrage v1.0 |
 | 0.2 | 07/10/2026 | Équipe | Rôle par chasse à la place du rôle choisi à l'inscription, suppression de compte en cascade ajoutée au périmètre, décisions techniques retirées (renvoyées au jalon 2), table des matières et contraintes ajoutées |
 | 0.3 | 26/10/2026 | Équipe | Réponses aux questions ouvertes intégrées : mode essai pour l'Organisateur, confirmation d'e-mail et mot de passe oublié, modération (signalement, rôle Admin, bannissement), distinction suppression volontaire et bannissement, chasses privées et date de fermeture optionnelle, langue française seule, chasse par équipe confirmée hors périmètre. Voir le journal des décisions D-005 à D-012 |
+| 1.1 | 26/10/2026 | Équipe | Jalons et règles de pilotage déplacés dans le [rétroplanning](retroplanning.md), responsabilités dans le [RACI](raci.md), risques dans l'[analyse des risques et plans B](analyse-des-risques.md). Les titres sont conservés et renvoient vers ces documents |
 
 **Table des matières**
 
@@ -79,8 +80,8 @@ Ce cahier des charges décrit **ce que le MVP doit faire**. Les choix techniques
 | --- | --- | --- |
 | Inscription, connexion, rôles Organisateur et Joueur attribués par chasse | Must | M1 |
 | Suppression de compte en cascade (chasses créées et participations) | Must | M1 |
-| Création d'une chasse (titre, description, étapes ordonnées) et publication | Must | M2 |
-| Liste des chasses publiées | Must | M3 |
+| Création d'une chasse (titre, description, étapes ordonnées) et publication | Must | M3 |
+| Liste des chasses publiées | Must | M2 |
 | Inscription d'un joueur à une chasse | Must | M4 |
 | Progression par étapes et énigmes, validation côté serveur | Must | M4 |
 | Progression conservée entre les sessions | Must | M4 |
@@ -110,7 +111,7 @@ Règle de coupe : en cas de dérive, les Could sautent en premier, puis les Shou
 | Rôle Partenaire | Troisième rôle sans utilité pour la boucle | Un besoin partenaire est identifié |
 | Application mobile native | Le web responsive suffit (PWA possible) | Fonctions natives nécessaires |
 | Classements | Pas de sens sans volume de joueurs&#32; | Après un déploiement réel |
-| Notifications générales (rappels, réengagement) | Inutiles à la démonstration. Seul le cas du bannissement nécessite un e-mail (voir M7 et RM13) | Besoin de réengagement |
+| Notifications générales (rappels, réengagement) | Inutiles à la démonstration. Seul le cas du bannissement nécessite un e-mail (voir M7 et RM12) | Besoin de réengagement |
 | Administration complète (tableau de bord, gestion globale des comptes et des chasses) | Modération minimale (signalement et bannissement, voir M7) nécessaire pour le MVP | Besoin d'une administration plus large |
 | Chasse par équipe | Hors scénario de référence, complexité de progression partagée non nécessaire au MVP | Besoin confirmé après le MVP |
 | Multilinguisme | Le français seul suffit pour le MVP | Besoin international identifié |
@@ -349,19 +350,11 @@ Le séquencement des cinq jalons est fixé par le client. Le MVP correspond au c
 
 ### 7.1 Jalons
 
-| Jalon | Période | Sortie attendue | Prérequis |
-| --- | --- | --- | --- |
-| 1. Cadrage | 28/09/2026 au 30/10/2026 | Périmètre, proposition de valeur, utilisateurs, scénario de démonstration, risques | Aucun |
-| 2. Conception | 01/11/2026 au 15/12/2026 | Parcours, écrans essentiels, règles métier, backlog, architecture, modèle de données, sécurité, stratégie de tests, hébergement | Jalon 1 validé |
-| 3. Construction | 16/12/2026 au 31/03/2027 | Version exécutable du cœur du scénario | Architecture et backlog stabilisés |
-| 4. Consolidation | 01/04/2027 au 15/05/2027 | Version corrigée, sécurisée, testée, éventuellement enrichie | Cœur démontrable |
-| 5. Démonstration | 16/05/2027 au 30/06/2027 | Version installable, résultats, limites, suites | Critères de réussite vérifiés |
+Voir le [rétroplanning](retroplanning.md#1-jalons).
 
 ### 7.2 Règles de pilotage
 
-- Aucun Could ne démarre tant qu'un Must critique n'est pas finalisé.
-- Aucune nouvelle fonctionnalité après le début du jalon 5 : le temps restant va aux tests, à la documentation et à la reproductibilité.
-- Chaque jalon a des critères d'entrée et de sortie vérifiables.
+Voir le [rétroplanning](retroplanning.md#2-règles-de-pilotage).
 
 ### 7.3 Backlog initial
 
@@ -369,13 +362,7 @@ Le backlog unique reprend les user stories de la section 4, avec pour chacune : 
 
 ### 7.4 Responsabilités
 
-| Domaine | Référent | Suppléant |
-| --- | --- | --- |
-| Pilotage, produit et backlog | Elias | Mathéo |
-| UX et Front | Alexis C. | Arthur |
-| Back et API | Alexis B. | Alexis C. |
-| Données et sécurité | Arthur | Alexis B. |
-| Qualité, CI/CD et documentation | Mathéo | Elias |
+Voir le [RACI](raci.md).
 
 ### 7.5 Definition of Ready
 
@@ -385,7 +372,7 @@ Une user story peut entrer en développement lorsque :
 - elle est rattachée à un module et à une priorité MoSCoW (section 1.2)
 - les règles métier et permissions concernées sont identifiées (sections 2.1 et 3.2)
 - sa dépendance à une autre user story, si elle existe, est levée ou planifiée avant elle
-- son référent de domaine l'a revue et ne voit pas de point bloquant.
+- son référent de domaine (section 7.4) l'a revue et ne voit pas de point bloquant.
 
 ### 7.6 Definition of Done
 
@@ -403,16 +390,7 @@ Une user story est terminée lorsque :
 
 ### 8.1 Risques
 
-| Réf. | Risque | Prob. | Impact | Réponse |
-| --- | --- | --- | --- | --- |
-| R1 | Périmètre trop large | Élevée | Élevé | MoSCoW, Must protégés, règle de coupe, premier sprint sur le scénario complet minimal |
-| R2 | Un enrichissement fragilise l'existant | Moyenne | Élevé | Aucun Could avant que les Must soient testés, une branche par enrichissement |
-| R3 | Droits d'accès mal maîtrisés | Moyenne | Élevé | Matrice 2.1 vérifiée par des tests d'autorisation, par rôle et par propriétaire |
-| R4 | Progression perdue ou incohérente | Moyenne | Élevé | Enregistrement à chaque validation, test de reprise de session (US-4.4) |
-| R5 | Disponibilité inégale, compétences variables | Élevée | Moyen | Référent et suppléant par domaine, capacité recalculée à chaque itération |
-| R6 | Preuves de qualité et de contribution insuffisantes | Moyenne | Élevé | Intégration continue dès la première itération, tickets et revues nominatifs, journal des décisions |
-| R7 | Démonstration non reproductible | Moyenne | Élevé | Jeu de données de démonstration, essai par un tiers, vidéo de démo/explicative |
-| R8 | Dépendance à un service externe payant ou limité | Moyenne | Moyen | Aucun service externe dans le MVP |
+Voir l'[analyse des risques et plans B](analyse-des-risques.md).
 
 ### 8.2 Contraintes
 - **Temps** : cinq jalons aux dates fixées par le client. La capacité tient compte des périodes de cours et d'entreprise et est recalculée à chaque itération. En cas de dérive, la règle de coupe s'applique.

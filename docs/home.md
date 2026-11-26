@@ -16,6 +16,10 @@ Sommaire de la documentation du projet.
 
 - Toutes les maquettes sont dans le dossiers `docs/conception/maquettes`
 
+#### Règles des étapes d'une chasse au trésor
+
+- [Règle de l'étape QCM](conception/regles-etapes/qcm.md)
+
 ## CI
 
 - [Git hooks](ci/hooks.md)

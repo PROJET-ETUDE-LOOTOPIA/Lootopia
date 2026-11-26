@@ -93,4 +93,32 @@ feat(auth): ajoute la connexion via email
 
 ## Conventions liées au code
 
-Les conventions spécifiques au code (style, formatage, organisation) dépendent du ou des langages utilisés dans le projet. Elles seront ajoutées ici une fois les technologies du projet définies.
+Les conventions s'appliquent à l'ensemble du projet (frontend et backend).
+
+### Nommage des fichiers et dossiers
+
+| Contexte | Convention | Exemple |
+| --- | --- | --- |
+| Dossiers de features (backend et frontend) | kebab-case | `reinitialisation-mot-de-passe/` |
+| Fichiers backend | kebab-case | `compte.service.ts`, `compte.repository.ts` |
+| Dossiers et fichiers de composants React | PascalCase | `FormulaireInscription/FormulaireInscription.tsx` |
+| Fichiers de pages React | PascalCase avec suffixe `Page` | `InscriptionPage.tsx` |
+| Fichiers de hooks | camelCase avec préfixe `use` | `useCompte.ts` |
+| Fichiers CSS modules | même nom que le composant associé | `FormulaireInscription.module.css` |
+
+### Nommage dans le code TypeScript
+
+| Element | Convention | Exemple |
+| --- | --- | --- |
+| Variables et fonctions | camelCase | `findByEmail`, `chasseStatut` |
+| Constantes | SCREAMING_SNAKE_CASE | `MAX_TENTATIVES`, `JWT_EXPIRATION` |
+| Classes | PascalCase | `NotFoundError` |
+| Types et interfaces | PascalCase | `Compte`, `ChassStatut` |
+| Enums | PascalCase (nom et valeurs) | `enum ChassStatut { Brouillon, Publie }` |
+| Composants React | PascalCase | `FormulaireInscription` |
+| Hooks React | camelCase avec préfixe `use` | `useCompte`, `useJeu` |
+| Classes CSS modules | camelCase | `.formulaireInscription` |
+
+### Langue
+
+Les termes du domaine métier sont en français dans le code (ex : `chasse`, `etape`, `compte`, `tentative`). Les termes techniques restent en anglais (ex : `service`, `repository`, `router`, `middleware`).

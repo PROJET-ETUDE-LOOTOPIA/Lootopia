@@ -76,7 +76,7 @@ Le front-end ne porte pas les règles métier, la validation des étapes et la c
 - Les outils de test sont déjà configurés pour TypeScript dans le dépôt (voir la section 7).
 - Enfin, TypeScript est connu et plus ou moins maitrisé par tous les membres de l'équipe.
 
-**Point d'attention.** Le typage n'existe qu'à la compilation. Les données reçues par l'API restent à valider à l'exécution : le choix de la bibliothèque de validation n'est pas encore fait (section 8).
+**Point d'attention.** Le typage n'existe qu'à la compilation. Les données reçues par l'API restent à valider à l'exécution : le choix de la bibliothèque de validation n'est pas encore fait (section 9).
 
 ### 4.2 React
 
@@ -89,7 +89,7 @@ Le front-end ne porte pas les règles métier, la validation des étapes et la c
 - React s'intègre sans difficulté avec une PWA (voir 4.3) et avec TypeScript.
 - Les outils de test des composants (React Testing Library) sont déjà installés dans le dépôt.
 
-**Point d'attention.** React ne fournit pas à lui seul le routage, ni la gestion de l'état partagé. Ces choix complémentaires ne sont pas encore faits (section 8).
+**Point d'attention.** React ne fournit pas à lui seul le routage, ni la gestion de l'état partagé. Ces choix complémentaires ne sont pas encore faits (section 9).
 
 ### 4.3 PWA pour le mobile
 
@@ -161,7 +161,7 @@ Le front-end ne porte pas les règles métier, la validation des étapes et la c
 
 ## 5. Organisation du code côté backend
 
-Deux décisions d'équipe structurent le back-end, conformément aux règles de [CLAUDE.md](../CLAUDE.md) et au cahier des charges :
+Deux décisions d'équipe structurent le back-end, conformément aux règles de [CLAUDE.md](CLAUDE.md) et au cahier des charges :
 
 - **Une règle métier, un service (Q11).** Un tiers doit pouvoir retrouver où modifier une règle de progression. Les routes Express valident l'entrée, appellent un service et renvoient la réponse.
 - **Un fichier, une responsabilité.** Chaque fichier et chaque fonction ont une seule responsabilité.
@@ -333,18 +333,18 @@ Le dépôt contient déjà la configuration suivante (voir les fichiers `package
 | Back-end | Jest, ts-jest, Supertest |
 | Front-end | Jest, ts-jest, React Testing Library|
 
-Les tests s'exécutent par `npm test` à la racine. Le détail se trouve dans [Structure des tests](tests/structure-des-tests.md) et [Pipelines CI](ci/pipelines.md).
+Les tests s'exécutent par `npm test` à la racine. Le détail se trouve dans [Structure des tests](docs/tests/structure-des-tests.md) et [Pipelines CI](docs/ci/pipelines.md).
 
 ## 8. Outillage CI et qualité
 
 | Outil | Rôle | Documentation |
 | --- | --- | --- |
-| Husky | Hooks git : vérification du message de commit (Conventional Commits) et du nom de branche avant push | [Git hooks](ci/hooks.md) |
-| GitHub Actions | Pipelines CI : tests, lint, formatage, vérification du titre des PR, changelog et tag de version | [Pipelines CI](ci/pipelines.md) |
-| ESLint | Analyse statique et vérification des conventions de nommage du code, configuré selon les règles de [CONTRIBUTING.md](../CONTRIBUTING.md) | [Lint et formatage](ci/pipelines.md#lint-et-formatage) |
+| Husky | Hooks git : vérification du message de commit (Conventional Commits) et du nom de branche avant push | [Git hooks](docs/ci/hooks.md) |
+| GitHub Actions | Pipelines CI : tests, lint, formatage, vérification du titre des PR, changelog et tag de version | [Pipelines CI](docs/ci/pipelines.md) |
+| ESLint | Analyse statique et vérification des conventions de nommage du code, configuré selon les règles de [CONTRIBUTING.md](CONTRIBUTING.md) | [Lint et formatage](docs/ci/pipelines.md#lint-et-formatage) |
 
 ## 9. Références
 
-- [Cahier des charges](cadrage/cahier-des-charges.md)
-- [Journal des décisions](cadrage/journal-des-decisions.md)
-- [Analyse des risques](cadrage/analyse-des-risques.md)
+- [Cahier des charges](docs/cadrage/cahier-des-charges.md)
+- [Journal des décisions](docs/cadrage/journal-des-decisions.md)
+- [Analyse des risques](docs/cadrage/analyse-des-risques.md)

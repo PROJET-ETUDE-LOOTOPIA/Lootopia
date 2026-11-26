@@ -6,7 +6,19 @@
   "private": true,
   "scripts": {
     "test": "npm --prefix backend test && npm --prefix frontend test",
+    "test:coverage": "npm --prefix backend run test:coverage && npm --prefix frontend run test:coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,cjs,mjs,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,cjs,mjs,json}\"",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,cjs,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.json": "prettier --write"
   },
   "repository": {
     "type": "git",
@@ -20,6 +32,15 @@
   },
   "homepage": "https://github.com/PROJET-ETUDE-LOOTOPIA/Lootopia#readme",
   "devDependencies": {
-    "husky": "^9.1.7"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-check-file": "^3.3.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.2",
+    "prettier": "^3.10.1",
+    "typescript-eslint": "^8.74.0"
   }
 }

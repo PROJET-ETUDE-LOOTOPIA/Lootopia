@@ -8,6 +8,7 @@
   - [Bloquer les push directs](#bloquer-les-push-directs)
   - [Tests manuels à effectuer](#tests-manuels-à-effectuer)
 - [Tests](#tests)
+- [Lint et formatage](#lint-et-formatage)
 - [Changelog et tag de version](#changelog-et-tag-de-version)
   - [Prérequis GitHub](#prérequis-github)
   - [Pousser sur `develop` protégée](#pousser-sur-develop-protégée)
@@ -59,6 +60,29 @@ Une fois activée, le seul moyen de faire arriver du code sur `main`/`develop` e
 ## Tests
 
 Le workflow [.github/workflows/tests.yml](../../.github/workflows/tests.yml) exécute les tests Jest du backend et du frontend sur chaque pull request et sur chaque push vers `develop` et `main`. Le job `run-tests` échoue si l'une des deux suites échoue. Pour qu'il bloque le merge, l'ajouter aux status checks obligatoires du ruleset, comme décrit dans [Rendre la vérification obligatoire](#rendre-la-vérification-obligatoire). Le détail de l'organisation des tests est dans [Structure des tests](../tests/structure-des-tests.md).
+
+Le même job vérifie aussi la qualité du code avant les tests : `npm run lint` (ESLint) puis `npm run format:check` (Prettier). Voir [Lint et formatage](#lint-et-formatage).
+
+## Lint et formatage
+
+La configuration est unique et située à la racine du dépôt :
+
+- [eslint.config.mjs](../../eslint.config.mjs) : règles ESLint (`@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks` pour le frontend). Les variables globales sont adaptées à chaque zone (Node pour `backend/`, navigateur pour `frontend/`, Jest pour les fichiers `*.test.*`).
+- [.prettierrc.json](../../.prettierrc.json) : règles de formatage. `eslint-config-prettier` désactive les règles ESLint de style pour éviter tout conflit entre les deux outils.
+- [.prettierignore](../../.prettierignore) : exclut notamment `package-lock.json` et `CHANGELOG.md` (généré par script).
+
+Commandes disponibles depuis la racine :
+
+```bash
+npm run lint           # analyse ESLint, échoue si une règle est enfreinte
+npm run lint:fix       # corrige automatiquement ce qui peut l'être
+npm run format         # reformate les fichiers avec Prettier
+npm run format:check   # vérifie le formatage sans modifier les fichiers
+```
+
+En local, le hook `pre-commit` exécute `lint-staged` sur les fichiers indexés (voir [Git hooks](hooks.md#lint-et-formatage-avant-commit)). Dans la CI, le workflow `tests.yml` rejoue `lint` et `format:check` sur l'ensemble du dépôt, ce qui couvre le cas d'un commit fait avec `--no-verify`.
+
+Le plugin `eslint-plugin-react` n'est pas installé, car React ne l'est pas encore (voir [Points à finaliser](../tests/structure-des-tests.md#points-à-finaliser)). Il pourra être ajouté à `eslint.config.mjs` avec l'arrivée du frontend.
 
 ## Changelog et tag de version
 

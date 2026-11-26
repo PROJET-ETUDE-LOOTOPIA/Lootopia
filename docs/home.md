@@ -12,6 +12,10 @@ Sommaire de la documentation du projet.
 - [Politique d'usage de l'IA](cadrage/politique-IA.md)
 - [Journal des décisions](cadrage/journal-des-decisions.md)
 
+## Conception
+
+- Toutes les maquettes sont dans le dossiers `docs/conception/maquettes`
+
 ## CI
 
 - [Git hooks](ci/hooks.md)

@@ -165,6 +165,16 @@ Puis :
 
 Le job `sonar.yml` lance l'analyse sonarqube lors d'une PR qui vise les branches `develop` ou `main`.
 
+### Quality Gate temporairement non bloquant
+
+Tant qu'aucun test n'est en place, la couverture de test fait échouer le Quality Gate. Pour ne pas bloquer le job, l'option `-Dsonar.qualitygate.wait=true` a été retirée des `args` du step `SonarQube Scan` dans `sonar.yml`. L'analyse est toujours exécutée et envoyée à SonarCloud, mais le job n'attend plus le résultat du Quality Gate.
+
+Une fois les tests et la génération du rapport de couverture en place :
+- Décommenter et compléter le step `Build and test` dans `sonar.yml` pour produire le rapport de couverture.
+- Remettre `-Dsonar.qualitygate.wait=true` dans les `args` du step `SonarQube Scan` et supprimer le commentaire TODO associé.
+
+Le check de décoration de PR posté directement par SonarCloud est indépendant du workflow. S'il reste en échec, il faut ajuster le Quality Gate (condition `Coverage on New Code`) dans SonarCloud ou retirer ce check des checks requis dans les settings GitHub.
+
 Pour configurer sonarqube dans le projet, il faut suivre les étapes suivantes : 
 - Créer le compte et l'organisation
   - Inscrivez-vous sur sonarcloud.io avec votre compte GitHub

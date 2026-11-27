@@ -26,7 +26,6 @@ Aucune étape ne bloque le joueur. Une mauvaise réponse ou un temps écoulé ra
 
 ### 3.1 Les champs de l'étape
 
-- Le titre de l'étape est obligatoire et compte de 1 à 60 caractères.
 - La liste des questions est obligatoire et compte de 5 à 10 questions.
 - Les points par question sont obligatoires, avec 20 points par défaut.
 - Le chronomètre par question
@@ -48,5 +47,3 @@ Le décompte démarre à l'affichage de la question. Le serveur fait foi pour le
 Quand le temps est écoulé, la question rapporte 0 point, la bonne réponse est révélée et le joueur passe à la suite.
 
 Le temps de l'étape, affiché en fin d'étape, correspond à la durée écoulée entre l'affichage de la première question et la validation de la dernière.
-
-# 
